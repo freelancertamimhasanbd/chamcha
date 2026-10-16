@@ -1,1 +1,594 @@
 
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>চামচা: ক্ষমতার খেলা</title>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--g:#0a7d4f;--r:#d62839;--y:#f4c430;--bg:#0f1420}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);font-family:'Hind Siliguri','Noto Sans Bengali','Kalpurush',sans-serif;color:#fff;touch-action:none}
+canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:none}
+.screen{position:fixed;inset:0;z-index:30;display:none;flex-direction:column;align-items:center;justify-content:center;padding:18px;text-align:center;overflow-y:auto;touch-action:pan-y;background:radial-gradient(circle at 50% 20%,rgba(10,125,79,.88),rgba(15,20,32,.97))}
+.screen.show{display:flex}
+.screen.clear{background:rgba(8,10,18,.85)}
+h1{font-size:clamp(34px,9vw,64px);margin:0 0 6px;color:var(--y);text-shadow:0 3px 0 #7a1020,0 6px 14px #000;line-height:1.2}
+h2{margin:0 0 10px;color:var(--y)}
+.sub{opacity:.92;margin:0 0 16px;font-size:clamp(15px,4vw,20px);max-width:560px;line-height:1.5}
+.btn{display:block;width:min(330px,88vw);margin:7px auto;padding:12px 16px;font-weight:700;font-size:18px;font-family:inherit;color:#fff;background:linear-gradient(#e63946,#b5172a);border:0;border-radius:14px;box-shadow:0 4px 0 #6d0d19;cursor:pointer}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #6d0d19}
+.btn.alt{background:linear-gradient(#12a068,#0a7d4f);box-shadow:0 4px 0 #064d30}
+.btn.dim{background:#4a5066;box-shadow:0 4px 0 #272b38}
+.note{font-size:12px;opacity:.75;max-width:520px;margin-top:12px;line-height:1.5}
+ul.help{text-align:left;max-width:520px;line-height:1.7;font-size:15px;padding-left:20px;margin:0 0 12px}
+.lbarw{width:240px;height:10px;border-radius:6px;background:rgba(255,255,255,.2);overflow:hidden;margin:8px 0}
+.lbarw i{display:block;height:100%;width:0;background:var(--y);transition:width .25s}
+#hud{position:fixed;inset:0;z-index:10;pointer-events:none;display:none}
+#hud.show{display:block}
+#top{position:absolute;left:8px;right:8px;top:max(8px,env(safe-area-inset-top));display:flex;gap:6px;align-items:flex-start}
+.panel{background:rgba(10,14,24,.74);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:6px 10px;font-size:13px;line-height:1.35}
+#left{flex:1}
+.row{display:flex;justify-content:space-between;margin-bottom:3px;font-size:14px}
+#stats{display:grid;grid-template-columns:1fr 1fr;gap:3px 12px}
+.bar{height:6px;border-radius:4px;background:rgba(255,255,255,.2);overflow:hidden;margin-top:2px}
+.bar i{display:block;height:100%;width:0;background:#2ecc71;transition:width .3s}
+#bPause{pointer-events:auto;width:46px;height:46px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:rgba(10,14,24,.8);color:#fff;font-size:20px}
+#hint{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(158px + env(safe-area-inset-bottom));max-width:92vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
+#arr{display:inline-block;color:var(--y);font-weight:700}
+#joy{position:absolute;left:22px;bottom:calc(26px + env(safe-area-inset-bottom));width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.35);pointer-events:auto;touch-action:none;display:none}
+#joy.on{display:block}
+#knob{position:absolute;left:50%;top:50%;width:52px;height:52px;margin:-26px 0 0 -26px;border-radius:50%;background:rgba(255,255,255,.6)}
+#act{position:absolute;right:22px;bottom:calc(34px + env(safe-area-inset-bottom));width:96px;height:96px;border-radius:50%;pointer-events:auto;border:3px solid rgba(255,255,255,.5);background:rgba(214,40,57,.82);color:#fff;font-size:16px;font-weight:700;font-family:inherit;line-height:1.2}
+#act.ready{background:#12a068;box-shadow:0 0 0 6px rgba(46,204,113,.35);animation:pl 1s infinite}
+@keyframes pl{50%{box-shadow:0 0 0 12px rgba(46,204,113,.12)}}
+#dlg{position:fixed;left:0;right:0;bottom:0;z-index:25;display:none;padding:10px 10px max(10px,env(safe-area-inset-bottom))}
+#dlg.show{display:block}
+#dbox{max-width:640px;margin:0 auto;background:rgba(14,18,30,.97);border:2px solid var(--y);border-radius:16px;padding:12px;max-height:72vh;overflow-y:auto;touch-action:pan-y}
+#dn{font-weight:700;color:var(--y);font-size:18px}
+#dr{font-size:12px;opacity:.7}
+#dt{margin:8px 0;font-size:16px;line-height:1.55;white-space:pre-line}
+#dc .btn{width:100%;font-size:15px;padding:10px 12px;text-align:left}
+#toast{position:fixed;left:50%;top:26%;transform:translateX(-50%);z-index:40;background:rgba(0,0,0,.82);border:1px solid var(--y);padding:10px 16px;border-radius:12px;max-width:88vw;text-align:center;opacity:0;transition:opacity .3s;pointer-events:none;font-size:15px}
+#banner{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:41;background:linear-gradient(#f4c430,#c98f0a);color:#2b1a00;font-weight:700;font-size:clamp(20px,6vw,32px);padding:16px 22px;border-radius:16px;text-align:center;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 8px 30px #000}
+#toast.show,#banner.show{opacity:1}
+</style>
+</head>
+<body>
+
+<div id="hud">
+  <div id="top">
+    <div class="panel" id="left">
+      <div class="row"><b id="rank">🎖️ কর্মী</b><span>⭐ <b id="score">০</b></span></div>
+      <div id="stats">
+        <div>🥄 চামচা <b id="sCP">০</b></div>
+        <div>👥 সমর্থন <b id="vSup">৪০</b><div class="bar"><i id="bSup"></i></div></div>
+        <div>🏛️ প্রভাব <b id="sInf">০</b></div>
+        <div>🔍 ঝুঁকি <b id="vRisk">০</b><div class="bar"><i id="bRisk" style="background:#e74c3c"></i></div></div>
+      </div>
+    </div>
+    <button id="bPause">⏸</button>
+  </div>
+  <div class="panel" id="hint"><span id="arr">⬆</span> <span id="htxt"></span></div>
+  <div id="joy"><div id="knob"></div></div>
+  <button id="act">কথা<br>বলো</button>
+</div>
+
+<div id="dlg"><div id="dbox"><div id="dn"></div><div id="dr"></div><div id="dt"></div><div id="dc"></div></div></div>
+<div id="toast"></div>
+<div id="banner"></div>
+
+<div class="screen show" id="loading">
+  <h1 style="font-size:40px">চামচা: ক্ষমতার খেলা</h1>
+  <div class="lbarw"><i id="lbar"></i></div>
+  <p id="ltxt">লোড হচ্ছে…</p>
+</div>
+
+<div class="screen" id="err">
+  <h2>⚠️ গেম চালু করা যায়নি</h2>
+  <p class="sub" id="errmsg"></p>
+  <button class="btn" onclick="location.reload()">🔄 আবার চেষ্টা করো</button>
+</div>
+
+<div class="screen" id="home">
+  <h1>চামচা:<br>ক্ষমতার খেলা</h1>
+  <p class="sub">একজন সাধারণ কর্মী থেকে মন্ত্রী হওয়ার কাল্পনিক ব্যঙ্গচিত্র — তোষামোদ, প্রচারণা আর জনসেবার টানাপোড়েনে ক্ষমতার সিঁড়ি বাইতে পারবে তো?</p>
+  <button class="btn" id="bNew">▶ নতুন খেলা শুরু</button>
+  <button class="btn alt" id="bCont">📂 চালিয়ে যান</button>
+  <button class="btn dim" id="bHelp">❓ কীভাবে খেলবে</button>
+  <button class="btn dim" id="bSet">⚙️ সেটিংস</button>
+  <div class="note">⚠️ সব চরিত্র, দল, প্রকল্প ও ঘটনা সম্পূর্ণ কাল্পনিক। বাস্তব কোনো ব্যক্তি বা প্রতিষ্ঠানের সঙ্গে মিল কাকতালীয়। এটি ব্যঙ্গাত্মক বিনোদন — দুর্নীতিকে উৎসাহ দেওয়া উদ্দেশ্য নয়; অনৈতিক পথের পরিণতি গেমের মধ্যেই আছে।</div>
+</div>
+
+<div class="screen" id="help">
+  <h2>❓ কীভাবে খেলবে</h2>
+  <ul class="help">
+    <li>🕹️ চলা: কিবোর্ডে WASD/তীর কী, মোবাইলে বাঁ পাশের জয়স্টিক।</li>
+    <li>👀 ক্যামেরা ঘোরাতে স্ক্রিনে আঙুল ড্র্যাগ করো (কিবোর্ডে Q / R)।</li>
+    <li>💬 কোনো চরিত্রের কাছে গিয়ে E চাপো বা "কথা বলো" বোতাম ট্যাপ করো। হলুদ তীর কাছের মিশনের দিক দেখাবে।</li>
+    <li>🥄 চামচা পয়েন্ট, 👥 জনসমর্থন, 🏛️ প্রভাব বাড়াও — ফলে কর্মী → নেতা → এমপি → মন্ত্রী।</li>
+    <li>🔍 তদন্ত-ঝুঁকি ১০০ হলে অথবা জনসমর্থন ০ হলে খেলা শেষ!</li>
+    <li>⚠️ "কাল্পনিক অনৈতিক পথে" পয়েন্ট বেশি, কিন্তু ঝুঁকি আর জনরোষও বেশি।</li>
+    <li>⏳ একই চরিত্রের সাথে ২৫ সেকেন্ড পর আবার মিশন করা যায়।</li>
+    <li>💾 প্রতি মিশনের পর অটো-সেভ হয়।</li>
+  </ul>
+  <button class="btn" id="hBack">⬅ ফিরে যাও</button>
+</div>
+
+<div class="screen" id="settings">
+  <h2>⚙️ সেটিংস</h2>
+  <button class="btn dim" id="sSound"></button>
+  <label style="margin:8px 0;font-size:16px">ক্যামেরার দূরত্ব: <b id="camv"></b><br><input type="range" id="sCam" min="9" max="24" step="1" style="width:250px"></label>
+  <button class="btn dim" id="sQ"></button>
+  <button class="btn dim" id="sJoy"></button>
+  <button class="btn" id="sBack">⬅ ফিরে যাও</button>
+</div>
+
+<div class="screen clear" id="pause">
+  <h2>⏸ বিরতি</h2>
+  <p class="sub" id="pinfo"></p>
+  <button class="btn alt" id="pResume">▶ চালিয়ে যাও</button>
+  <button class="btn dim" id="pSave">💾 সেভ করো</button>
+  <button class="btn dim" id="pSet">⚙️ সেটিংস</button>
+  <button class="btn dim" id="pRestart">🔄 নতুন করে শুরু</button>
+  <button class="btn" id="pMenu">🏠 মূল মেনু</button>
+</div>
+
+<div class="screen clear" id="over">
+  <h1 style="font-size:42px">💥 খেলা শেষ</h1>
+  <p class="sub" id="omsg"></p>
+  <p class="sub" id="oinfo"></p>
+  <button class="btn alt" id="oLoad">📂 শেষ সেভ থেকে চালাও</button>
+  <button class="btn" id="oNew">🔄 নতুন করে শুরু (Restart)</button>
+  <button class="btn dim" id="oMenu">🏠 মূল মেনু</button>
+</div>
+
+<div class="screen clear" id="win">
+  <h1 style="font-size:40px">🏆 মন্ত্রী হলে!</h1>
+  <p class="sub" id="wmsg"></p>
+  <p class="sub" id="winfo"></p>
+  <button class="btn alt" id="wMore">▶ খেলা চালিয়ে যাও</button>
+  <button class="btn" id="wNew">🔄 নতুন খেলা</button>
+  <button class="btn dim" id="wMenu">🏠 মূল মেনু</button>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const bn=n=>String(Math.round(n)).replace(/\d/g,d=>'০১২৩৪৫৬৭৮৯'[d]);
+const SK='chamcha_save_v1',TK='chamcha_settings_v1';
+const isTouch=('ontouchstart' in window)||navigator.maxTouchPoints>0;
+let settings={sound:true,cam:14,hq:true,joy:isTouch};
+try{Object.assign(settings,JSON.parse(localStorage.getItem(TK)||'{}'))}catch(e){}
+const saveSettings=()=>{try{localStorage.setItem(TK,JSON.stringify(settings))}catch(e){}};
+function showScreens(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('show'));if(id)$(id).classList.add('show')}
+
+/* ---------- ডেটা ---------- */
+const RANKS=['কর্মী','নেতা','এমপি','মন্ত্রী'];
+const GOALS=[{cp:50,sup:0,inf:0},{cp:150,sup:30,inf:15},{cp:300,sup:25,inf:40}];
+const newState=()=>({cp:0,sup:40,inf:0,risk:0,score:0,rank:0,done:0,time:0,cool:{},won:false,x:0,z:9});
+const NPCS=[
+{id:'hashem',name:'মোড়ল হাশেম',role:'ওয়ার্ড নেতা',type:'তোষামোদ',x:-8,z:3,min:0,col:'#f2f2f2',cap:'#1b5e20',
+ q:'এই যে নতুন কর্মী! দলে টিকতে হলে নেতার মন জোগাতে শেখো। বলো, কী করবে?',
+ ch:[{t:'স্যার, আপনার মতো নেতা হয় না! 🙌',r:'হাশেম গর্বে গোঁফে তা দিলেন: "ছেলেটা বুঝদার!"',e:{cp:12,inf:3,risk:2,sup:-1}},
+ {t:'স্যার, এলাকার ড্রেনটা আগে ঠিক করা দরকার।',r:'নেতা ভ্রু কুঁচকালেন, তবে এলাকাবাসী খুশি হলো।',e:{cp:3,sup:6,inf:1}},
+ {t:'চা-বিস্কুট এনে দিই, স্যার? ☕',r:'"চা-ই আসল রাজনীতি!" — নেতা মহাখুশি।',e:{cp:8,inf:2}}]},
+{id:'badsha',name:'ঠিকাদার বাদশা মিয়া',role:'নির্মাণ ঠিকাদার',type:'টেন্ডার মিশন (কাল্পনিক)',x:14,z:-2,min:1,col:'#6d4c41',cap:'#ffd54a',
+ lock:'ছোট কর্মীর সাথে টেন্ডার নিয়ে কথা বলি না। আগে নেতা হও!',
+ q:'কাল্পনিক "সোনার সড়ক" প্রকল্পের টেন্ডার ডাকা হচ্ছে। কাজটা আমি চাই — কীভাবে এগোবে?',
+ ch:[{t:'খোলা ও স্বচ্ছ দরপত্র ডাকি 📋',r:'সবার জন্য খোলা দরপত্র — ঠিকাদাররা গজগজ করলেও সংবাদমাধ্যম প্রশংসা করল।',e:{cp:6,sup:9,inf:3,risk:-6}},
+ {t:'কমিশনের বিনিময়ে বাদশাকে কাজ দিই (কাল্পনিক অনৈতিক পথ) 💰',r:'কাজ হলো, পকেট ভারী হলো — কিন্তু ফাইলের গন্ধ গোয়েন্দাদের নাকে পৌঁছাল!',e:{cp:32,inf:10,risk:24,sup:-7}},
+ {t:'কাজটা ভাগ করে ছোট ঠিকাদারদের দিই',r:'মাঝামাঝি পথ: কাজ ভাগ হলো, সবাই কিছুটা খুশি।',e:{cp:14,sup:3,inf:4,risk:6}}]},
+{id:'sumi',name:'সাংবাদিক সুমি',role:'অনুসন্ধানী সাংবাদিক',type:'গণমাধ্যম',x:-3,z:-14,min:0,col:'#7b1fa2',cap:'#212121',
+ q:'আপনার এলাকার উন্নয়ন-বাজেট নিয়ে প্রশ্ন আছে। প্রতিবেদন লিখব — কী বলবেন?',
+ ch:[{t:'সব হিসাব খোলাখুলি দেখাই 🧾',r:'স্বচ্ছতার প্রতিবেদন ছাপা হলো — ঝুঁকি কমল, জনগণ খুশি।',e:{cp:2,sup:8,risk:-12,inf:1}},
+ {t:'এখন ব্যস্ত, পিএস-এর সাথে কথা বলুন 😬',r:'সুমি সন্দেহের চোখে নোট লিখলেন।',e:{cp:3,risk:8,sup:-2}},
+ {t:'বিজ্ঞাপন দিয়ে চুপ করানোর চেষ্টা করি (কাল্পনিক অনৈতিক পথ)',r:'সুমি রেকর্ডার চালু রেখেছিলেন! শিরোনাম: "টাকা দিয়ে মুখ বন্ধের চেষ্টা"।',e:{cp:-5,risk:20,sup:-8,inf:-2}}]},
+{id:'rafiq',name:'সভাপতি রফিক',role:'বাজার কমিটি',type:'প্রচারণা',x:-24,z:-3,min:0,col:'#0277bd',cap:'#ffffff',
+ q:'ভোটের আগে হাওয়া তুলতে হবে। কী ধরনের প্রচারণা চালাবে?',
+ ch:[{t:'পোস্টার-ব্যানারে এলাকা ছেয়ে ফেলি 🪧',r:'ব্যানারে শহর ঢাকল — ছবির সাইজ বাড়ল, প্রতিশ্রুতির না।',e:{cp:14,sup:4,inf:3,risk:2}},
+ {t:'ফেসবুক লাইভে জনসংযোগ 📱',r:'লাইভে লাইক বাড়ল, কমেন্টে কিছু ট্রলও জুটল।',e:{cp:10,sup:8,inf:2,risk:1}},
+ {t:'বিশাল জনসভা ডাকি 📣',r:'মাইক ফাটিয়ে সভা শেষ — ভাড়া-করা ভিড় নিয়ে কানাঘুষা চলছে।',e:{cp:26,sup:10,inf:7,risk:5}}]},
+{id:'kashem',name:'কাশেম চাচা',role:'প্রবীণ গ্রামবাসী',type:'জনসেবা',x:3,z:18,min:0,col:'#8d6e63',cap:'#eeeeee',
+ q:'বাবা, বন্যায় অনেকে ঘরছাড়া। ত্রাণ বিলির লোক নেই। তুমি কী করবে?',
+ ch:[{t:'নিজে দাঁড়িয়ে ত্রাণ বিলি করি 🍚',r:'ঘাম ঝরালে, দোয়া পেলে — মানুষ তোমায় মনে রাখবে।',e:{cp:8,sup:16,inf:3,risk:-3}},
+ {t:'ছবি তুলে ফেসবুকে পোস্ট করি 🤳',r:'ছবিটা ভাইরাল! তবে ত্রাণের থলিটা ছিল খালি...',e:{cp:12,sup:2,inf:2,risk:2}},
+ {t:'টিউবওয়েল বসানোর উদ্যোগ নিই 🚰',r:'টেকসই কাজ — গ্রাম তোমার নাম বলে।',e:{cp:5,sup:12,inf:4,risk:-2}}]},
+{id:'mp',name:'এমপি ডা. কালাম (কাল্পনিক)',role:'সংসদ সদস্য',type:'বড়স্তরের তোষামোদ',x:38,z:-10,min:1,col:'#f5f5f5',cap:'#b71c1c',
+ lock:'আমার সাথে দেখা করতে হলে অন্তত নেতা হতে হবে, বাবা।',
+ q:'তরুণ নেতারা ভালোই আসছে! আমার পাশে থাকলে দল তোমাকে মনে রাখবে।',
+ ch:[{t:'স্যার, আপনি ছাড়া এই এলাকা অচল! 🙇',r:'এমপি সাহেব হেসে বললেন: "তোমার ভবিষ্যৎ উজ্জ্বল!"',e:{cp:28,inf:8,risk:6,sup:-2}},
+ {t:'স্যার, জনগণের দাবিগুলো সংসদে তুলবেন কি?',r:'এমপি একটু থতমত খেলেন, তবে প্রতিশ্রুতি দিলেন।',e:{cp:10,sup:10,inf:4}},
+ {t:'আপনার জন্মদিনে শহর জুড়ে তোরণ বানাই! 🎂',r:'তোরণে শহর ঝলমল — বাজেট নিয়ে প্রশ্ন উঠল।',e:{cp:35,inf:7,risk:10,sup:-5}}]},
+{id:'minister',name:'মন্ত্রী জনাব শাহীন (কাল্পনিক)',role:'মন্ত্রী',type:'ক্ষমতার চূড়া',x:0,z:-55,min:2,col:'#212121',cap:'#f4c430',
+ lock:'মন্ত্রীর দরজা শুধু এমপিদের জন্য খোলে।',
+ q:'চেয়ারের কাছাকাছি আসছ। এখানে পা পিছলে পড়ার ঝুঁকিও বেশি।',
+ ch:[{t:'মন্ত্রীজি, আপনার সিদ্ধান্তই আমার সিদ্ধান্ত! 🫡',r:'মন্ত্রী সাহেব মাথা নাড়লেন — আরেকটি "হ্যাঁ-জি" যোগ হলো।',e:{cp:40,inf:12,risk:12,sup:-3}},
+ {t:'নীতি নিয়ে কিছু গঠনমূলক পরামর্শ দিই',r:'মন্ত্রী মনোযোগ দিয়ে শুনলেন, ফাইলে নোট নিলেন।',e:{cp:14,sup:9,inf:8,risk:-2}},
+ {t:'গোপন নথি দেখিয়ে সুবিধা নিই (কাল্পনিক অনৈতিক পথ)',r:'সুবিধা মিলল, কিন্তু নথির প্রতিটি কপিতে তোমার আঙুলের ছাপ!',e:{cp:45,inf:15,risk:30,sup:-10}}]}
+];
+const EVENTS=[
+{t:'📰 বিরোধীরা তোমার ব্যানার নিয়ে ব্যঙ্গ করেছে!',e:{sup:-4}},
+{t:'😂 তোমার তোষামোদের ভিডিও ভাইরাল — কিছুটা ট্রল!',e:{sup:-2,risk:3,cp:2}},
+{t:'👏 পাড়ার ছেলেরা তোমার কাজের প্রশংসা করছে।',e:{sup:4}},
+{t:'🕵️ কেউ তোমার "ম্যানেজ" নিয়ে প্রশ্ন তুলেছে।',e:{risk:4}},
+{t:'🎁 দল থেকে ছোট সম্মাননা মিলল!',e:{cp:5,inf:1}}];
+
+/* ---------- গ্লোবাল ---------- */
+let renderer,scene,camera,player,WT,cv;
+const colliders=[],cars=[];
+let mode='boot',S=newState(),camYaw=0,T=0,walk=0,nearNpc=null,curNpc=null,chose=false,evT=40,markT=0,setBack='home',loopOn=false;
+const keys={},joy={x:0,y:0},MK={};
+let seed=12345;const rnd=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646};
+let ac;
+function beep(f,d,type,v){if(!settings.sound)return;try{ac=ac||new (window.AudioContext||window.webkitAudioContext)();const o=ac.createOscillator(),g=ac.createGain();o.type=type||'sine';o.frequency.value=f;g.gain.value=v||.05;o.connect(g);g.connect(ac.destination);o.start();g.gain.exponentialRampToValueAtTime(.0001,ac.currentTime+(d||.12));o.stop(ac.currentTime+(d||.12))}catch(e){}}
+const sfxGood=()=>{beep(660,.1);setTimeout(()=>beep(880,.12),100)};
+const sfxBad=()=>beep(180,.28,'sawtooth');
+const jingle=()=>[523,659,784,1046].forEach((f,i)=>setTimeout(()=>beep(f,.18),i*120));
+let tt;function toast(t,ms){const e=$('toast');e.textContent=t;e.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>e.classList.remove('show'),ms||2400)}
+function banner(t){const e=$('banner');e.textContent=t;e.classList.add('show');setTimeout(()=>e.classList.remove('show'),2800)}
+
+/* ---------- 3D হেল্পার ---------- */
+const M=c=>new THREE.MeshLambertMaterial({color:c,flatShading:true});
+function box(w,h,d,c,x,y,z,par){const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),M(c));m.position.set(x,y,z);(par||scene).add(m);return m}
+function cyl(rt,rb,h,c,x,y,z,par,seg){const m=new THREE.Mesh(new THREE.CylinderGeometry(rt,rb,h,seg||8),M(c));m.position.set(x,y,z);(par||scene).add(m);return m}
+function plane(w,d,c,x,y,z){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),M(c));m.rotation.x=-Math.PI/2;m.position.set(x,y,z);scene.add(m);return m}
+function textTex(txt,w,h,font,fg,bg){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');if(bg){g.fillStyle=bg;g.fillRect(0,0,w,h)}g.font=font;g.textAlign='center';g.textBaseline='middle';g.fillStyle=fg;if(!bg){g.lineWidth=6;g.strokeStyle='rgba(0,0,0,.75)';g.strokeText(txt,w/2,h/2,w-24)}g.fillText(txt,w/2,h/2,w-24);return new THREE.CanvasTexture(c)}
+function label(txt,w,col){w=w||8;const s=new THREE.Sprite(new THREE.SpriteMaterial({map:textTex(txt,768,96,'700 44px "Hind Siliguri","Noto Sans Bengali",sans-serif',col||'#fff'),transparent:true}));s.scale.set(w,w*96/768,1);return s}
+function winTex(){const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,64,64);g.fillStyle='#5b6b7a';for(let i=0;i<2;i++)for(let j=0;j<2;j++)g.fillRect(8+i*30,8+j*30,18,16);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;return t}
+
+/* ---------- দৃশ্য তৈরি ---------- */
+function init(){
+  renderer=new THREE.WebGLRenderer({antialias:true});
+  renderer.setPixelRatio(settings.hq?Math.min(window.devicePixelRatio||1,2):1);
+  renderer.setSize(innerWidth,innerHeight);
+  cv=renderer.domElement;document.body.insertBefore(cv,document.body.firstChild);
+  scene=new THREE.Scene();scene.background=new THREE.Color(0x9fd3f0);scene.fog=new THREE.Fog(0x9fd3f0,70,180);
+  camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.3,400);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x4a6b45,.9));
+  const sun=new THREE.DirectionalLight(0xfff1d0,.7);sun.position.set(40,80,30);scene.add(sun);
+  WT=winTex();
+  ['!','🔒','⏳'].forEach((t,i)=>{MK[['ok','lock','wait'][i]]=textTex(t,128,128,'700 100px sans-serif',i?'#fff':'#ffd54a')});
+}
+function building(x,z,w,d,h,pal){
+  const t=WT.clone();t.needsUpdate=true;t.repeat.set(Math.ceil(w/3),Math.ceil(h/3));
+  const m=new THREE.Mesh(new THREE.BoxGeometry(w,h,d),new THREE.MeshLambertMaterial({color:pal[Math.floor(rnd()*pal.length)],map:t}));
+  m.position.set(x,h/2,z);scene.add(m);
+  box(w+.4,.5,d+.4,0x555a63,x,h+.25,z);
+  if(rnd()<.5)cyl(1,1,1.6,0x2b6cb0,x+w/4,h+1.3,z,null,8);
+  colliders.push({x:x,z:z,hw:w/2+.3,hd:d/2+.3});
+}
+function tree(x,z){cyl(.25,.35,2,0x6b4a2b,x,1,z,null,6);const c=new THREE.Mesh(new THREE.ConeGeometry(1.6,3.5,7),M(0x2e7d32));c.position.set(x,3.6,z);scene.add(c)}
+function parliament(bx,bz){
+  box(22,.6,13,0xcfc7b4,bx,.3,bz);box(20,4,11,0xf1ebdd,bx,2.3,bz);
+  for(let i=-4;i<=4;i++)cyl(.45,.45,4,0xffffff,bx+i*2.2,2.3,bz+6,null,8);
+  box(21,.6,2,0xe0d8c5,bx,4.6,bz+6);
+  cyl(4.5,5,2,0xf1ebdd,bx,5.3,bz,null,16);
+  const d=new THREE.Mesh(new THREE.SphereGeometry(4.5,14,8,0,Math.PI*2,0,Math.PI/2),M(0xf4c430));d.position.set(bx,6.3,bz);scene.add(d);
+  cyl(.08,.08,4,0x333333,bx,12.8,bz,null,6);box(1.6,1,.05,0xd62839,bx+.9,14,bz);
+  const l=label('কাল্পনিক সংসদ ভবন',14,'#ffd54a');l.position.set(bx,17,bz);scene.add(l);
+  colliders.push({x:bx,z:bz,hw:11,hd:6.6});
+}
+function buildCity(){
+  plane(320,320,0x5a8f4f,0,0,0);
+  for(let v=-80;v<=80;v+=40){
+    plane(10,180,0x3b3f47,v,.05,0);plane(180,10,0x3b3f47,0,.05,v);
+    plane(.3,180,0xd9c34a,v,.08,0);plane(180,.3,0xd9c34a,0,.08,v);
+  }
+  const pal=[0xc9b79c,0xb5838d,0x9db4c0,0xe0c097,0xc2c8c5,0xa3b18a,0xd4a373];
+  const C=[-60,-20,20,60],parks=['-60,-20','60,20','-20,60'];
+  C.forEach(bx=>C.forEach(bz=>{
+    const k=bx+','+bz;
+    if(k==='20,-60'){parliament(bx,bz);return}
+    if(parks.indexOf(k)>=0){plane(30,30,0x6fae5c,bx,.06,bz);for(let i=0;i<9;i++)tree(bx+(rnd()-.5)*24,bz+(rnd()-.5)*24);return}
+    for(let i=-1;i<=1;i+=2)for(let j=-1;j<=1;j+=2){
+      if(rnd()<.15)continue;
+      building(bx+i*7+(rnd()-.5)*1.5,bz+j*7+(rnd()-.5)*1.5,6+rnd()*5,6+rnd()*5,5+rnd()*16,pal);
+    }
+  }));
+}
+function buildProps(){
+  cyl(3.2,3.4,.8,0xb0b0b0,0,.4,0,null,16);cyl(2.6,2.6,.5,0x4fc3f7,0,.85,0,null,16);cyl(.4,.5,2,0xcfcfcf,0,1.6,0);
+  colliders.push({x:0,z:0,hw:3.4,hd:3.4});
+  const fl=label('কেন্দ্রীয় চত্বর',7,'#fff');fl.position.set(0,4.2,0);scene.add(fl);
+  [[5.2,-20,Math.PI/2,'চামচা জিন্দাবাদ!'],[-5.2,22,Math.PI/2,'উন্নয়ন মানেই ব্যানার!'],[-22,5.2,0,'প্রতিশ্রুতি আজ, ভুলে যাওয়া কাল'],[24,-5.2,0,'সবার নেতা, সবার ছবি']].forEach(a=>{
+    cyl(.15,.15,6,0x444444,a[0],3,a[1],null,6);
+    const p=new THREE.Mesh(new THREE.PlaneGeometry(9,3.4),new THREE.MeshBasicMaterial({map:textTex(a[3],512,192,'700 54px "Hind Siliguri","Noto Sans Bengali",sans-serif','#fff','#c62828'),side:THREE.DoubleSide}));
+    p.position.set(a[0],6.2,a[1]);p.rotation.y=a[2];scene.add(p);
+  });
+}
+function makeNPCs(){
+  NPCS.forEach(n=>{
+    const g=new THREE.Group();
+    cyl(.5,.6,1.5,n.col,0,.75,0,g);
+    const h=new THREE.Mesh(new THREE.SphereGeometry(.4,10,8),M(0xe0ac84));h.position.y=1.9;g.add(h);
+    cyl(.38,.42,.3,n.cap,0,2.25,0,g,8);
+    const l=label(n.name+' • '+n.role,8);l.position.y=3.1;g.add(l);
+    const mk=new THREE.Sprite(new THREE.SpriteMaterial({map:MK.ok,transparent:true}));mk.scale.set(1.4,1.4,1);mk.position.y=4;g.add(mk);
+    g.position.set(n.x,0,n.z);scene.add(g);n.mesh=g;n.mk=mk;n.d=99;
+    colliders.push({x:n.x,z:n.z,hw:.5,hd:.5});
+  });
+}
+function makePlayer(){
+  player=new THREE.Group();
+  cyl(.45,.55,1.4,0x0a8f5c,0,.7,0,player);
+  const h=new THREE.Mesh(new THREE.SphereGeometry(.4,10,8),M(0xe0ac84));h.position.y=1.8;player.add(h);
+  cyl(.38,.42,.28,0xd62839,0,2.12,0,player,8);
+  const s=cyl(.05,.05,1,0xffd54a,.7,1.1,.2,player,6);s.rotation.z=-.3;
+  const b=new THREE.Mesh(new THREE.SphereGeometry(.18,8,6),M(0xffd54a));b.scale.set(1,1.4,.5);b.position.set(.84,1.65,.2);player.add(b);
+  const l=label('তুমি (চামচা)',4.5,'#9ef0c0');l.position.y=3;player.add(l);
+  scene.add(player);
+}
+function makeCars(){
+  const cs=[0xe53935,0x1e88e5,0xfdd835,0x43a047,0xfb8c00,0x8e24aa],lines=[-80,-40,0,40,80];
+  for(let i=0;i<10;i++){
+    const g=new THREE.Group(),c=cs[i%cs.length];
+    box(1.3,.6,2.2,c,0,.8,0,g);box(1.3,.12,1.4,0x222222,0,1.9,-.3,g);box(.1,1,.1,0x222222,.6,1.35,.3,g);box(.1,1,.1,0x222222,-.6,1.35,.3,g);
+    [-.7,.7].forEach(x=>{const w=cyl(.45,.45,.12,0x151515,x,.45,0,g,10);w.rotation.z=Math.PI/2});
+    const axis=i%2,dir=(i%4<2)?1:-1,line=lines[i%5],off=dir*2,pos=-80+rnd()*160;
+    if(axis===0){g.position.set(pos,0,line+off);g.rotation.y=dir>0?Math.PI/2:-Math.PI/2}
+    else{g.position.set(line-off,0,pos);g.rotation.y=dir>0?0:Math.PI}
+    scene.add(g);cars.push({g:g,axis:axis,dir:dir,sp:3+rnd()*3});
+  }
+}
+
+/* ---------- সেভ/লোড ---------- */
+function save(){try{if(player){S.x=player.position.x;S.z=player.position.z}localStorage.setItem(SK,JSON.stringify(S));return true}catch(e){return false}}
+function readSave(){try{return JSON.parse(localStorage.getItem(SK))}catch(e){return null}}
+const hasSave=()=>!!readSave();
+
+/* ---------- HUD ---------- */
+function goalText(){
+  if(S.rank>=3)return 'সর্বোচ্চ পদে পৌঁছে গেছো!';
+  const g=GOALS[S.rank];
+  return 'পরের পদ '+RANKS[S.rank+1]+': চামচা '+bn(g.cp)+(g.sup?', সমর্থন '+bn(g.sup)+'+':'')+(g.inf?', প্রভাব '+bn(g.inf)+'+':'');
+}
+function hud(){
+  $('rank').textContent='🎖️ '+RANKS[S.rank];$('score').textContent=bn(S.score);
+  $('sCP').textContent=bn(S.cp);$('sInf').textContent=bn(S.inf);
+  $('vSup').textContent=bn(S.sup);$('bSup').style.width=S.sup+'%';
+  $('vRisk').textContent=bn(S.risk);$('bRisk').style.width=S.risk+'%';
+}
+function refreshMarkers(){
+  NPCS.forEach(n=>{
+    const cd=(S.cool[n.id]||0)-S.time;
+    n.mk.material.map=S.rank<n.min?MK.lock:(cd>0?MK.wait:MK.ok);n.mk.material.needsUpdate=true;
+  });
+}
+function effText(e){
+  const f=[['cp','চামচা'],['sup','জনসমর্থন'],['inf','প্রভাব'],['risk','তদন্ত-ঝুঁকি']],o=[];
+  f.forEach(a=>{const v=e[a[0]];if(v)o.push(a[1]+' '+(v>0?'+':'−')+bn(Math.abs(v)))});
+  return '📊 '+o.join(' • ');
+}
+function apply(e){
+  S.cp=Math.max(0,S.cp+(e.cp||0));
+  S.sup=Math.min(100,Math.max(0,S.sup+(e.sup||0)));
+  S.inf=Math.max(0,S.inf+(e.inf||0));
+  S.risk=Math.min(100,Math.max(0,S.risk+(e.risk||0)));
+  S.score+=Math.max(10,Math.round(40+(e.cp||0)*4+(e.sup||0)*3+(e.inf||0)*3-(e.risk||0)*2));
+  hud();
+}
+
+/* ---------- সংলাপ ---------- */
+function addBtn(t,f,cls){const b=document.createElement('button');b.className='btn '+(cls||'alt');b.textContent=t;b.onclick=f;$('dc').appendChild(b)}
+function openDlg(n){
+  curNpc=n;mode='dialog';chose=false;joy.x=joy.y=0;$('knob').style.transform='translate(0,0)';
+  $('dn').textContent=n.name;$('dr').textContent=n.role+' • '+n.type;$('dc').innerHTML='';
+  const cd=(S.cool[n.id]||0)-S.time;
+  if(S.rank<n.min){$('dt').textContent=n.lock;addBtn('ঠিক আছে, পরে আসব',closeDlg,'dim')}
+  else if(cd>0){$('dt').textContent='এখন ব্যস্ত আছি, '+bn(Math.ceil(cd))+' সেকেন্ড পরে এসো।';addBtn('ঠিক আছে',closeDlg,'dim')}
+  else{$('dt').textContent=n.q;n.ch.forEach(c=>addBtn(c.t,()=>choose(n,c)));addBtn('এখন নয়',closeDlg,'dim')}
+  $('dlg').classList.add('show');$('hud').classList.add('show');
+}
+function choose(n,c){
+  apply(c.e);S.cool[n.id]=S.time+25;S.done++;chose=true;
+  $('dt').textContent=c.r+'\n\n'+effText(c.e);$('dc').innerHTML='';addBtn('ঠিক আছে',closeDlg);
+  ((c.e.sup||0)*2+(c.e.cp||0)-(c.e.risk||0)>0)?sfxGood():sfxBad();
+}
+function closeDlg(){
+  $('dlg').classList.remove('show');
+  if(mode==='dialog')mode='play';
+  if(chose){chose=false;afterChoice()}
+  refreshMarkers();
+}
+function afterChoice(){
+  let up=false;
+  while(S.rank<3){
+    const g=GOALS[S.rank];
+    if(S.cp>=g.cp&&S.sup>=g.sup&&S.inf>=g.inf){S.rank++;up=true;S.score+=500*S.rank;banner('🎉 পদোন্নতি! এখন তুমি '+RANKS[S.rank]);hud()}else break;
+  }
+  if(up)jingle();
+  if(S.risk>=100)return over('তদন্ত কমিটি (কাল্পনিক) তোমার সব "ম্যানেজ" ফাঁস করে দিয়েছে! ঝুঁকি ১০০% ছুঁয়েছে।');
+  if(S.sup<=0)return over('জনসমর্থন শূন্য! ভোটাররা তোমাকে ছুঁড়ে ফেলেছে — চামচা দিয়ে ভাত খাওয়া গেলেও ভোট খাওয়া যায় না।');
+  if(S.rank>=3&&!S.won){S.won=true;save();return win()}
+  save();
+}
+function over(msg){
+  mode='over';sfxBad();$('omsg').textContent=msg;
+  $('oinfo').textContent='চূড়ান্ত স্কোর: '+bn(S.score)+' • পদ: '+RANKS[S.rank]+' • মিশন: '+bn(S.done);
+  $('oLoad').style.display=hasSave()?'':'none';showScreens('over');
+}
+function win(){
+  mode='over';jingle();
+  $('wmsg').textContent=S.risk<30&&S.sup>60?'সৎ ও জনপ্রিয় মন্ত্রী! ব্যঙ্গের দুনিয়ায় এমন ঘটনা বিরল — জনগণ সত্যিই তোমার পাশে।':
+   (S.risk>60?'মন্ত্রী তো হলে, কিন্তু তদন্তের তলোয়ার সুতোয় ঝুলছে মাথার ওপর। চেয়ারে বসা যত সহজ, টিকে থাকা তত নয়!':'ক্ষমতার চেয়ার পেলে — এবার চেয়ার ধরে রাখার আসল লড়াই শুরু। (সব চরিত্র ও ঘটনা কাল্পনিক)');
+  $('winfo').textContent='স্কোর: '+bn(S.score)+' • মিশন: '+bn(S.done);showScreens('win');
+}
+
+/* ---------- খেলার প্রবাহ ---------- */
+function snapCam(){followCam(1,true)}
+function followCam(dt,snap){
+  const d=settings.cam,k=snap?1:Math.min(1,dt*6),p=player.position;
+  camera.position.x+=(p.x+Math.sin(camYaw)*d-camera.position.x)*k;
+  camera.position.y+=(d*.85+2-camera.position.y)*k;
+  camera.position.z+=(p.z+Math.cos(camYaw)*d-camera.position.z)*k;
+  camera.lookAt(p.x,1.6,p.z);
+}
+function startGame(load){
+  if(load){const d=readSave();S=d?Object.assign(newState(),d):newState()}else S=newState();
+  player.position.set(S.x,0,S.z);camYaw=0;snapCam();
+  showScreens(null);$('hud').classList.add('show');$('dlg').classList.remove('show');
+  $('joy').classList.toggle('on',!!settings.joy);
+  hud();refreshMarkers();mode='play';nearNpc=null;evT=40;
+  toast(load?'স্বাগতম ফিরে আসার জন্য! 🥄':'নতুন কর্মী হিসেবে যাত্রা শুরু! তীর অনুসরণ করে নেতাদের সাথে কথা বলো।',3200);
+  if(!load)save();
+}
+function goMenu(){mode='menu';$('hud').classList.remove('show');$('dlg').classList.remove('show');showScreens('home');updateHome()}
+function updateHome(){$('bCont').style.display=hasSave()?'':'none'}
+function pauseGame(){
+  if(mode!=='play')return;mode='pause';
+  $('pinfo').textContent='পদ: '+RANKS[S.rank]+' • স্কোর: '+bn(S.score)+' • মিশন: '+bn(S.done)+'\n'+goalText();
+  $('pinfo').style.whiteSpace='pre-line';showScreens('pause');
+}
+function resumeGame(){showScreens(null);mode='play'}
+function tryInteract(){
+  if(mode!=='play')return;
+  if(nearNpc)openDlg(nearNpc);else toast('কাছে কোনো চরিত্র নেই — হলুদ তীর অনুসরণ করো 🧭',1800);
+}
+
+/* ---------- আপডেট ---------- */
+function collide(p,r){
+  for(let i=0;i<colliders.length;i++){
+    const c=colliders[i],dx=p.x-c.x,dz=p.z-c.z,ox=c.hw+r-Math.abs(dx),oz=c.hd+r-Math.abs(dz);
+    if(ox>0&&oz>0){if(ox<oz)p.x+=ox*(dx<0?-1:1);else p.z+=oz*(dz<0?-1:1)}
+  }
+}
+function playUpdate(dt){
+  S.time+=dt;
+  let ix=((keys.d||keys.arrowright)?1:0)-((keys.a||keys.arrowleft)?1:0)+joy.x;
+  let iz=((keys.s||keys.arrowdown)?1:0)-((keys.w||keys.arrowup)?1:0)+joy.y;
+  camYaw+=((keys.q?1:0)-(keys.r?1:0))*dt*1.8;
+  let len=Math.hypot(ix,iz);if(len>1){ix/=len;iz/=len;len=1}
+  const sy=Math.sin(camYaw),cy=Math.cos(camYaw),p=player.position;
+  if(len>.08){
+    const mx=ix*cy+iz*sy,mz=-ix*sy+iz*cy;
+    p.x+=mx*8*dt;p.z+=mz*8*dt;
+    let da=Math.atan2(mx,mz)-player.rotation.y;da=Math.atan2(Math.sin(da),Math.cos(da));
+    player.rotation.y+=da*Math.min(1,dt*12);walk+=dt*12;
+    p.y=Math.abs(Math.sin(walk))*.15;
+  }else p.y=0;
+  collide(p,.55);p.x=Math.max(-86,Math.min(86,p.x));p.z=Math.max(-86,Math.min(86,p.z));
+  let bd=1e9,ad=1e9,avail=null;nearNpc=null;
+  NPCS.forEach(n=>{
+    const dx=n.x-p.x,dz=n.z-p.z,d=Math.hypot(dx,dz);n.d=d;
+    const ok=S.rank>=n.min&&(S.cool[n.id]||0)<=S.time;
+    if(d<5&&d<bd){bd=d;nearNpc=n}
+    if(ok&&d<ad){ad=d;avail=n}
+    if(d<9)n.mesh.rotation.y=Math.atan2(-dx,-dz);
+  });
+  const act=$('act'),arr=$('arr');
+  if(nearNpc){act.classList.add('ready');arr.style.visibility='hidden';$('htxt').textContent='💬 '+nearNpc.name+' — কথা বলো (E)'}
+  else{
+    act.classList.remove('ready');
+    if(avail){
+      const dx=avail.x-p.x,dz=avail.z-p.z,a=dx*cy-dz*sy,f=-dx*sy-dz*cy;
+      arr.style.visibility='visible';arr.style.transform='rotate('+(Math.atan2(a,f)*180/Math.PI)+'deg)';
+      $('htxt').textContent=avail.name+' • '+bn(ad)+' মি';
+    }else{arr.style.visibility='hidden';$('htxt').textContent='🕐 সবাই ব্যস্ত বা পদ যথেষ্ট নয় — একটু অপেক্ষা করো'}
+  }
+  markT+=dt;if(markT>1){markT=0;refreshMarkers();hud()}
+  S.risk=Math.max(0,S.risk-.15*dt);
+  evT-=dt;
+  if(evT<=0){evT=35+rnd()*25;const ev=EVENTS[Math.floor(rnd()*EVENTS.length)];apply(ev.e);toast(ev.t+'\n'+effText(ev.e),3200);afterChoice()}
+}
+function loop(){
+  requestAnimationFrame(loop);
+  const dt=Math.min(.05,(performance.now()-loop.t||16)/1000);loop.t=performance.now();T+=dt;
+  if(mode==='play')playUpdate(dt);
+  if(mode!=='menu'&&mode!=='boot')followCam(dt);
+  else{const a=T*.12;camera.position.set(Math.sin(a)*65,32,Math.cos(a)*65);camera.lookAt(0,4,0)}
+  if(mode!=='pause'){
+    cars.forEach(c=>{const k=c.axis===0?'x':'z';let v=c.g.position[k]+c.dir*c.sp*dt;if(v>88)v=-88;if(v<-88)v=88;c.g.position[k]=v});
+  }
+  NPCS.forEach((n,i)=>{n.mk.position.y=4+Math.sin(T*3+i)*.2;n.mesh.children[0].scale.y=1+Math.sin(T*2+i)*.02});
+  renderer.render(scene,camera);
+}
+
+/* ---------- সেটিংস UI ---------- */
+function renderSettings(){
+  $('sSound').textContent='🔊 শব্দ: '+(settings.sound?'চালু':'বন্ধ');
+  $('sCam').value=settings.cam;$('camv').textContent=bn(settings.cam);
+  $('sQ').textContent='🖼️ গ্রাফিক্স: '+(settings.hq?'উচ্চ':'কম (দ্রুত)');
+  $('sJoy').textContent='🕹️ জয়স্টিক: '+(settings.joy?'দেখাও':'লুকাও');
+}
+function openSettings(back){setBack=back;renderSettings();showScreens('settings')}
+
+/* ---------- ইনপুট ও বোতাম ---------- */
+function bindUI(){
+  $('bNew').onclick=()=>{if(hasSave()&&!confirm('নতুন খেলা শুরু করলে আগের সেভ মুছে যাবে। চালিয়ে যাবে?'))return;startGame(false)};
+  $('bCont').onclick=()=>startGame(true);
+  $('bHelp').onclick=()=>showScreens('help');
+  $('hBack').onclick=()=>showScreens('home');
+  $('bSet').onclick=()=>openSettings('home');
+  $('sBack').onclick=()=>showScreens(setBack);
+  $('sSound').onclick=()=>{settings.sound=!settings.sound;saveSettings();renderSettings()};
+  $('sCam').oninput=e=>{settings.cam=+e.target.value;saveSettings();$('camv').textContent=bn(settings.cam)};
+  $('sQ').onclick=()=>{settings.hq=!settings.hq;renderer.setPixelRatio(settings.hq?Math.min(window.devicePixelRatio||1,2):1);renderer.setSize(innerWidth,innerHeight);saveSettings();renderSettings()};
+  $('sJoy').onclick=()=>{settings.joy=!settings.joy;$('joy').classList.toggle('on',!!settings.joy);saveSettings();renderSettings()};
+  $('bPause').onclick=pauseGame;
+  $('act').onclick=tryInteract;
+  $('pResume').onclick=resumeGame;
+  $('pSave').onclick=()=>toast(save()?'সেভ হয়েছে ✅':'সেভ করা যায়নি ❌',1500);
+  $('pSet').onclick=()=>openSettings('pause');
+  $('pRestart').onclick=()=>{if(confirm('বর্তমান অগ্রগতি মুছে নতুন করে শুরু করবে?'))startGame(false)};
+  $('pMenu').onclick=()=>{save();goMenu()};
+  $('oLoad').onclick=()=>startGame(true);
+  $('oNew').onclick=()=>startGame(false);
+  $('oMenu').onclick=goMenu;
+  $('wMore').onclick=()=>{showScreens(null);mode='play'};
+  $('wNew').onclick=()=>startGame(false);
+  $('wMenu').onclick=goMenu;
+  document.addEventListener('click',e=>{if(e.target.classList&&e.target.classList.contains('btn'))beep(520,.05)});
+  document.addEventListener('contextmenu',e=>e.preventDefault());
+  addEventListener('keydown',e=>{
+    const k=e.key.toLowerCase();keys[k]=true;
+    if(mode==='play'&&k==='e')tryInteract();
+    if(k==='escape'||k==='p'){if(mode==='play')pauseGame();else if(mode==='pause')resumeGame();else if(mode==='dialog')closeDlg()}
+    if(k.indexOf('arrow')===0)e.preventDefault();
+  });
+  addEventListener('keyup',e=>{keys[e.key.toLowerCase()]=false});
+  addEventListener('blur',()=>{for(const k in keys)keys[k]=false});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden&&mode==='play')pauseGame()});
+  addEventListener('resize',()=>{if(!renderer)return;renderer.setSize(innerWidth,innerHeight);camera.aspect=innerWidth/innerHeight;camera.updateProjectionMatrix()});
+  /* জয়স্টিক */
+  const joyEl=$('joy'),knob=$('knob');let jid=null;
+  function jset(e){const r=joyEl.getBoundingClientRect(),R=r.width/2;let dx=e.clientX-(r.left+R),dy=e.clientY-(r.top+R);const L=Math.hypot(dx,dy),m=R-10;if(L>m){dx=dx/L*m;dy=dy/L*m}knob.style.transform='translate('+dx+'px,'+dy+'px)';joy.x=dx/m;joy.y=dy/m}
+  function jend(e){if(e.pointerId!==jid)return;jid=null;joy.x=joy.y=0;knob.style.transform='translate(0,0)'}
+  joyEl.addEventListener('pointerdown',e=>{jid=e.pointerId;joyEl.setPointerCapture(e.pointerId);jset(e);e.preventDefault()});
+  joyEl.addEventListener('pointermove',e=>{if(e.pointerId===jid)jset(e)});
+  joyEl.addEventListener('pointerup',jend);joyEl.addEventListener('pointercancel',jend);
+  /* ক্যামেরা ড্র্যাগ */
+  let drag=null;
+  cv.addEventListener('pointerdown',e=>{if(mode==='play'||mode==='dialog'){drag={id:e.pointerId,x:e.clientX};try{cv.setPointerCapture(e.pointerId)}catch(x){}}});
+  cv.addEventListener('pointermove',e=>{if(drag&&e.pointerId===drag.id){camYaw-=(e.clientX-drag.x)*.008;drag.x=e.clientX}});
+  const endd=e=>{if(drag&&e.pointerId===drag.id)drag=null};
+  cv.addEventListener('pointerup',endd);cv.addEventListener('pointercancel',endd);
+}
+
+/* ---------- বুট ---------- */
+function fail(msg){showScreens('err');$('errmsg').textContent=msg}
+function boot(){
+  if(typeof THREE==='undefined'){fail('Three.js (3D লাইব্রেরি) লোড হয়নি। ইন্টারনেট সংযোগ ঠিক আছে কিনা দেখে পেজ রিলোড করো।');return}
+  const steps=[['রেন্ডারার তৈরি হচ্ছে…',init],['শহরের রাস্তা ও ভবন বানানো হচ্ছে…',buildCity],['বিলবোর্ড ও চত্বর সাজানো হচ্ছে…',buildProps],['চরিত্ররা প্রস্তুত হচ্ছে…',()=>{makeNPCs();makePlayer();makeCars();bindUI()}]];
+  let i=0;
+  (function next(){
+    if(i>=steps.length){
+      $('lbar').style.width='100%';
+      setTimeout(()=>{mode='menu';showScreens('home');updateHome();if(!loopOn){loopOn=true;loop()}},250);return;
+    }
+    $('ltxt').textContent=steps[i][0];$('lbar').style.width=(i/steps.length*100)+'%';
+    setTimeout(()=>{
+      try{steps[i][1]()}catch(e){fail('গেম চালু করা যায়নি (আপনার ব্রাউজারে WebGL চালু আছে কিনা দেখুন): '+(e&&e.message?e.message:e));return}
+      i++;next();
+    },60);
+  })();
+}
+const fontWait=(document.fonts&&document.fonts.ready)?document.fonts.ready:Promise.resolve();
+Promise.race([fontWait,new Promise(r=>setTimeout(r,2000))]).then(boot,boot);
+})();
+</script>
+</body>
+</html>
