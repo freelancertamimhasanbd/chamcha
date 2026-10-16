@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -10,31 +9,33 @@
 :root{--g:#0a7d4f;--r:#d62839;--y:#f4c430;--bg:#0f1420}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
 html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);font-family:'Hind Siliguri','Noto Sans Bengali','Kalpurush',sans-serif;color:#fff;touch-action:none}
-canvas{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:none}
+canvas.main{display:block;position:fixed;inset:0;width:100%;height:100%;touch-action:none}
 .screen{position:fixed;inset:0;z-index:30;display:none;flex-direction:column;align-items:center;justify-content:center;padding:18px;text-align:center;overflow-y:auto;touch-action:pan-y;background:radial-gradient(circle at 50% 20%,rgba(10,125,79,.88),rgba(15,20,32,.97))}
 .screen.show{display:flex}
-.screen.clear{background:rgba(8,10,18,.85)}
+.screen.clear{background:rgba(8,10,18,.88)}
 h1{font-size:clamp(34px,9vw,64px);margin:0 0 6px;color:var(--y);text-shadow:0 3px 0 #7a1020,0 6px 14px #000;line-height:1.2}
 h2{margin:0 0 10px;color:var(--y)}
-.sub{opacity:.92;margin:0 0 16px;font-size:clamp(15px,4vw,20px);max-width:560px;line-height:1.5}
+.sub{opacity:.92;margin:0 0 16px;font-size:clamp(15px,4vw,20px);max-width:560px;line-height:1.5;white-space:pre-line}
 .btn{display:block;width:min(330px,88vw);margin:7px auto;padding:12px 16px;font-weight:700;font-size:18px;font-family:inherit;color:#fff;background:linear-gradient(#e63946,#b5172a);border:0;border-radius:14px;box-shadow:0 4px 0 #6d0d19;cursor:pointer}
 .btn:active{transform:translateY(3px);box-shadow:0 1px 0 #6d0d19}
 .btn.alt{background:linear-gradient(#12a068,#0a7d4f);box-shadow:0 4px 0 #064d30}
 .btn.dim{background:#4a5066;box-shadow:0 4px 0 #272b38}
-.note{font-size:12px;opacity:.75;max-width:520px;margin-top:12px;line-height:1.5}
-ul.help{text-align:left;max-width:520px;line-height:1.7;font-size:15px;padding-left:20px;margin:0 0 12px}
+.note{font-size:12px;opacity:.75;max-width:540px;margin-top:12px;line-height:1.5}
+ul.help{text-align:left;max-width:540px;line-height:1.65;font-size:15px;padding-left:20px;margin:0 0 12px}
 .lbarw{width:240px;height:10px;border-radius:6px;background:rgba(255,255,255,.2);overflow:hidden;margin:8px 0}
 .lbarw i{display:block;height:100%;width:0;background:var(--y);transition:width .25s}
 #hud{position:fixed;inset:0;z-index:10;pointer-events:none;display:none}
 #hud.show{display:block}
 #top{position:absolute;left:8px;right:8px;top:max(8px,env(safe-area-inset-top));display:flex;gap:6px;align-items:flex-start}
 .panel{background:rgba(10,14,24,.74);border:1px solid rgba(255,255,255,.18);border-radius:12px;padding:6px 10px;font-size:13px;line-height:1.35}
-#left{flex:1}
+#left{flex:1;min-width:0}
 .row{display:flex;justify-content:space-between;margin-bottom:3px;font-size:14px}
 #stats{display:grid;grid-template-columns:1fr 1fr;gap:3px 12px}
 .bar{height:6px;border-radius:4px;background:rgba(255,255,255,.2);overflow:hidden;margin-top:2px}
 .bar i{display:block;height:100%;width:0;background:#2ecc71;transition:width .3s}
+#rcol{display:flex;flex-direction:column;align-items:flex-end;gap:6px}
 #bPause{pointer-events:auto;width:46px;height:46px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:rgba(10,14,24,.8);color:#fff;font-size:20px}
+#mm{width:88px;height:88px;border-radius:12px;border:1px solid rgba(255,255,255,.3);background:#24402b}
 #hint{position:absolute;left:50%;transform:translateX(-50%);bottom:calc(158px + env(safe-area-inset-bottom));max-width:92vw;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:14px}
 #arr{display:inline-block;color:var(--y);font-weight:700}
 #joy{position:absolute;left:22px;bottom:calc(26px + env(safe-area-inset-bottom));width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,.14);border:2px solid rgba(255,255,255,.35);pointer-events:auto;touch-action:none;display:none}
@@ -45,13 +46,13 @@ ul.help{text-align:left;max-width:520px;line-height:1.7;font-size:15px;padding-l
 @keyframes pl{50%{box-shadow:0 0 0 12px rgba(46,204,113,.12)}}
 #dlg{position:fixed;left:0;right:0;bottom:0;z-index:25;display:none;padding:10px 10px max(10px,env(safe-area-inset-bottom))}
 #dlg.show{display:block}
-#dbox{max-width:640px;margin:0 auto;background:rgba(14,18,30,.97);border:2px solid var(--y);border-radius:16px;padding:12px;max-height:72vh;overflow-y:auto;touch-action:pan-y}
+#dbox{max-width:640px;margin:0 auto;background:rgba(14,18,30,.97);border:2px solid var(--y);border-radius:16px;padding:12px;max-height:74vh;overflow-y:auto;touch-action:pan-y}
 #dn{font-weight:700;color:var(--y);font-size:18px}
 #dr{font-size:12px;opacity:.7}
 #dt{margin:8px 0;font-size:16px;line-height:1.55;white-space:pre-line}
 #dc .btn{width:100%;font-size:15px;padding:10px 12px;text-align:left}
-#toast{position:fixed;left:50%;top:26%;transform:translateX(-50%);z-index:40;background:rgba(0,0,0,.82);border:1px solid var(--y);padding:10px 16px;border-radius:12px;max-width:88vw;text-align:center;opacity:0;transition:opacity .3s;pointer-events:none;font-size:15px}
-#banner{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:41;background:linear-gradient(#f4c430,#c98f0a);color:#2b1a00;font-weight:700;font-size:clamp(20px,6vw,32px);padding:16px 22px;border-radius:16px;text-align:center;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 8px 30px #000}
+#toast{position:fixed;left:50%;top:26%;transform:translateX(-50%);z-index:40;background:rgba(0,0,0,.84);border:1px solid var(--y);padding:10px 16px;border-radius:12px;max-width:88vw;text-align:center;opacity:0;transition:opacity .3s;pointer-events:none;font-size:15px;white-space:pre-line}
+#banner{position:fixed;left:50%;top:40%;transform:translate(-50%,-50%);z-index:41;background:linear-gradient(#f4c430,#c98f0a);color:#2b1a00;font-weight:700;font-size:clamp(20px,6vw,32px);padding:16px 22px;border-radius:16px;text-align:center;opacity:0;transition:opacity .3s;pointer-events:none;box-shadow:0 8px 30px #000;max-width:90vw}
 #toast.show,#banner.show{opacity:1}
 </style>
 </head>
@@ -66,9 +67,14 @@ ul.help{text-align:left;max-width:520px;line-height:1.7;font-size:15px;padding-l
         <div>👥 সমর্থন <b id="vSup">৪০</b><div class="bar"><i id="bSup"></i></div></div>
         <div>🏛️ প্রভাব <b id="sInf">০</b></div>
         <div>🔍 ঝুঁকি <b id="vRisk">০</b><div class="bar"><i id="bRisk" style="background:#e74c3c"></i></div></div>
+        <div>💰 <b id="sMoney">০</b> লাখ</div>
+        <div>⛓️ জেল <b id="sJail">০</b>/৩</div>
       </div>
     </div>
-    <button id="bPause">⏸</button>
+    <div id="rcol">
+      <button id="bPause">⏸</button>
+      <canvas id="mm" width="88" height="88"></canvas>
+    </div>
   </div>
   <div class="panel" id="hint"><span id="arr">⬆</span> <span id="htxt"></span></div>
   <div id="joy"><div id="knob"></div></div>
@@ -93,12 +99,12 @@ ul.help{text-align:left;max-width:520px;line-height:1.7;font-size:15px;padding-l
 
 <div class="screen" id="home">
   <h1>চামচা:<br>ক্ষমতার খেলা</h1>
-  <p class="sub">একজন সাধারণ কর্মী থেকে মন্ত্রী হওয়ার কাল্পনিক ব্যঙ্গচিত্র — তোষামোদ, প্রচারণা আর জনসেবার টানাপোড়েনে ক্ষমতার সিঁড়ি বাইতে পারবে তো?</p>
+  <p class="sub">একজন সাধারণ কর্মী থেকে মন্ত্রী হওয়ার কাল্পনিক ব্যঙ্গচিত্র — তোষামোদ, চাঁদাবাজি, ঘুস, মামলা আর কারাগারের টানাপোড়েনে ক্ষমতার সিঁড়ি বাইতে পারবে তো?</p>
   <button class="btn" id="bNew">▶ নতুন খেলা শুরু</button>
   <button class="btn alt" id="bCont">📂 চালিয়ে যান</button>
   <button class="btn dim" id="bHelp">❓ কীভাবে খেলবে</button>
   <button class="btn dim" id="bSet">⚙️ সেটিংস</button>
-  <div class="note">⚠️ সব চরিত্র, দল, প্রকল্প ও ঘটনা সম্পূর্ণ কাল্পনিক। বাস্তব কোনো ব্যক্তি বা প্রতিষ্ঠানের সঙ্গে মিল কাকতালীয়। এটি ব্যঙ্গাত্মক বিনোদন — দুর্নীতিকে উৎসাহ দেওয়া উদ্দেশ্য নয়; অনৈতিক পথের পরিণতি গেমের মধ্যেই আছে।</div>
+  <div class="note">⚠️ সতর্কতা: এই গেমে দুর্নীতি, চাঁদাবাজি, রাজনৈতিক সহিংসতা ও অপরাধের মতো বিষয় ব্যঙ্গাত্মকভাবে এসেছে। সব চরিত্র, দল, প্রকল্প ও ঘটনা সম্পূর্ণ কাল্পনিক; বাস্তব কোনো ব্যক্তি বা প্রতিষ্ঠানের সঙ্গে মিল কাকতালীয়। অপরাধকে উৎসাহ দেওয়া উদ্দেশ্য নয় — অনৈতিক পথের পরিণতি (মামলা, জেল, জনরোষ) গেমের মধ্যেই আছে।</div>
 </div>
 
 <div class="screen" id="help">
@@ -106,12 +112,13 @@ ul.help{text-align:left;max-width:520px;line-height:1.7;font-size:15px;padding-l
   <ul class="help">
     <li>🕹️ চলা: কিবোর্ডে WASD/তীর কী, মোবাইলে বাঁ পাশের জয়স্টিক।</li>
     <li>👀 ক্যামেরা ঘোরাতে স্ক্রিনে আঙুল ড্র্যাগ করো (কিবোর্ডে Q / R)।</li>
-    <li>💬 কোনো চরিত্রের কাছে গিয়ে E চাপো বা "কথা বলো" বোতাম ট্যাপ করো। হলুদ তীর কাছের মিশনের দিক দেখাবে।</li>
-    <li>🥄 চামচা পয়েন্ট, 👥 জনসমর্থন, 🏛️ প্রভাব বাড়াও — ফলে কর্মী → নেতা → এমপি → মন্ত্রী।</li>
-    <li>🔍 তদন্ত-ঝুঁকি ১০০ হলে অথবা জনসমর্থন ০ হলে খেলা শেষ!</li>
-    <li>⚠️ "কাল্পনিক অনৈতিক পথে" পয়েন্ট বেশি, কিন্তু ঝুঁকি আর জনরোষও বেশি।</li>
-    <li>⏳ একই চরিত্রের সাথে ২৫ সেকেন্ড পর আবার মিশন করা যায়।</li>
-    <li>💾 প্রতি মিশনের পর অটো-সেভ হয়।</li>
+    <li>💬 চরিত্রের কাছে গিয়ে E চাপো বা "কথা বলো" ট্যাপ করো। হলুদ তীর ও মিনিম্যাপের সবুজ বিন্দু মিশনের দিক দেখায়।</li>
+    <li>🥄 চামচা পয়েন্ট, 👥 সমর্থন, 🏛️ প্রভাব বাড়িয়ে পদোন্নতি: কর্মী → নেতা → এমপি → মন্ত্রী।</li>
+    <li>💰 টাকা (লাখে) আয় করো, ঘুস-খরচ ও আইনি ফি-তে লাগবে।</li>
+    <li>🔍 ঝুঁকি ১০০ হলে গ্রেপ্তার! তখন জামিন, ঘুস বা সাজা — তিনবার জেলে গেলে খেলা শেষ।</li>
+    <li>👥 জনসমর্থন ০ হলেও খেলা শেষ।</li>
+    <li>⚠️ "কাল্পনিক অনৈতিক পথে" পুরস্কার বেশি, কিন্তু ঝুঁকি, জনরোষ ও উল্টো ফলও বেশি।</li>
+    <li>⏳ একই চরিত্রের সাথে ২৫ সেকেন্ড পর আবার কথা বলা যায়। প্রতি মিশনের পর অটো-সেভ হয়।</li>
   </ul>
   <button class="btn" id="hBack">⬅ ফিরে যাও</button>
 </div>
@@ -133,6 +140,16 @@ ul.help{text-align:left;max-width:520px;line-height:1.7;font-size:15px;padding-l
   <button class="btn dim" id="pSet">⚙️ সেটিংস</button>
   <button class="btn dim" id="pRestart">🔄 নতুন করে শুরু</button>
   <button class="btn" id="pMenu">🏠 মূল মেনু</button>
+</div>
+
+<div class="screen clear" id="jail">
+  <h1 style="font-size:40px">⛓️ গ্রেপ্তার!</h1>
+  <p class="sub" id="jmsg"></p>
+  <p class="sub" id="jinfo"></p>
+  <div class="lbarw" id="jbw" style="display:none"><i id="jbar"></i></div>
+  <button class="btn alt" id="jBail"></button>
+  <button class="btn dim" id="jBribe"></button>
+  <button class="btn" id="jServe"></button>
 </div>
 
 <div class="screen clear" id="over">
@@ -159,7 +176,7 @@ ul.help{text-align:left;max-width:520px;line-height:1.7;font-size:15px;padding-l
 'use strict';
 const $=id=>document.getElementById(id);
 const bn=n=>String(Math.round(n)).replace(/\d/g,d=>'০১২৩৪৫৬৭৮৯'[d]);
-const SK='chamcha_save_v1',TK='chamcha_settings_v1';
+const SK='chamcha_save_v2',TK='chamcha_settings_v1';
 const isTouch=('ontouchstart' in window)||navigator.maxTouchPoints>0;
 let settings={sound:true,cam:14,hq:true,joy:isTouch};
 try{Object.assign(settings,JSON.parse(localStorage.getItem(TK)||'{}'))}catch(e){}
@@ -169,58 +186,112 @@ function showScreens(id){document.querySelectorAll('.screen').forEach(s=>s.class
 /* ---------- ডেটা ---------- */
 const RANKS=['কর্মী','নেতা','এমপি','মন্ত্রী'];
 const GOALS=[{cp:50,sup:0,inf:0},{cp:150,sup:30,inf:15},{cp:300,sup:25,inf:40}];
-const newState=()=>({cp:0,sup:40,inf:0,risk:0,score:0,rank:0,done:0,time:0,cool:{},won:false,x:0,z:9});
+const BAIL=40,JBRIBE=90;
+const newState=()=>({cp:0,sup:40,inf:0,risk:0,money:15,jail:0,score:0,rank:0,done:0,time:0,cool:{},won:false,x:0,z:9});
 const NPCS=[
 {id:'hashem',name:'মোড়ল হাশেম',role:'ওয়ার্ড নেতা',type:'তোষামোদ',x:-8,z:3,min:0,col:'#f2f2f2',cap:'#1b5e20',
  q:'এই যে নতুন কর্মী! দলে টিকতে হলে নেতার মন জোগাতে শেখো। বলো, কী করবে?',
  ch:[{t:'স্যার, আপনার মতো নেতা হয় না! 🙌',r:'হাশেম গর্বে গোঁফে তা দিলেন: "ছেলেটা বুঝদার!"',e:{cp:12,inf:3,risk:2,sup:-1}},
  {t:'স্যার, এলাকার ড্রেনটা আগে ঠিক করা দরকার।',r:'নেতা ভ্রু কুঁচকালেন, তবে এলাকাবাসী খুশি হলো।',e:{cp:3,sup:6,inf:1}},
- {t:'চা-বিস্কুট এনে দিই, স্যার? ☕',r:'"চা-ই আসল রাজনীতি!" — নেতা মহাখুশি।',e:{cp:8,inf:2}}]},
+ {t:'চা-বিস্কুট এনে দিই, স্যার? ☕',r:'"চা-ই আসল রাজনীতি!" — নেতা মহাখুশি।',e:{cp:8,inf:2,m:-1}}]},
 {id:'badsha',name:'ঠিকাদার বাদশা মিয়া',role:'নির্মাণ ঠিকাদার',type:'টেন্ডার মিশন (কাল্পনিক)',x:14,z:-2,min:1,col:'#6d4c41',cap:'#ffd54a',
  lock:'ছোট কর্মীর সাথে টেন্ডার নিয়ে কথা বলি না। আগে নেতা হও!',
  q:'কাল্পনিক "সোনার সড়ক" প্রকল্পের টেন্ডার ডাকা হচ্ছে। কাজটা আমি চাই — কীভাবে এগোবে?',
- ch:[{t:'খোলা ও স্বচ্ছ দরপত্র ডাকি 📋',r:'সবার জন্য খোলা দরপত্র — ঠিকাদাররা গজগজ করলেও সংবাদমাধ্যম প্রশংসা করল।',e:{cp:6,sup:9,inf:3,risk:-6}},
- {t:'কমিশনের বিনিময়ে বাদশাকে কাজ দিই (কাল্পনিক অনৈতিক পথ) 💰',r:'কাজ হলো, পকেট ভারী হলো — কিন্তু ফাইলের গন্ধ গোয়েন্দাদের নাকে পৌঁছাল!',e:{cp:32,inf:10,risk:24,sup:-7}},
- {t:'কাজটা ভাগ করে ছোট ঠিকাদারদের দিই',r:'মাঝামাঝি পথ: কাজ ভাগ হলো, সবাই কিছুটা খুশি।',e:{cp:14,sup:3,inf:4,risk:6}}]},
+ ch:[{t:'খোলা ও স্বচ্ছ দরপত্র ডাকি 📋',r:'সবার জন্য খোলা দরপত্র — ঠিকাদাররা গজগজ করলেও সংবাদমাধ্যম প্রশংসা করল।',e:{cp:6,sup:9,inf:3,risk:-6,m:2}},
+ {t:'কমিশনের বিনিময়ে বাদশাকে কাজ দিই (কাল্পনিক অনৈতিক পথ) 💰',r:'কাজ হলো, পকেট ভারী হলো — কিন্তু ফাইলের গন্ধ গোয়েন্দাদের নাকে পৌঁছাল!',e:{cp:32,inf:10,risk:24,sup:-7,m:45}},
+ {t:'কাজটা ভাগ করে ছোট ঠিকাদারদের দিই',r:'মাঝামাঝি পথ: কাজ ভাগ হলো, সবাই কিছুটা খুশি।',e:{cp:14,sup:3,inf:4,risk:6,m:10}}]},
 {id:'sumi',name:'সাংবাদিক সুমি',role:'অনুসন্ধানী সাংবাদিক',type:'গণমাধ্যম',x:-3,z:-14,min:0,col:'#7b1fa2',cap:'#212121',
  q:'আপনার এলাকার উন্নয়ন-বাজেট নিয়ে প্রশ্ন আছে। প্রতিবেদন লিখব — কী বলবেন?',
  ch:[{t:'সব হিসাব খোলাখুলি দেখাই 🧾',r:'স্বচ্ছতার প্রতিবেদন ছাপা হলো — ঝুঁকি কমল, জনগণ খুশি।',e:{cp:2,sup:8,risk:-12,inf:1}},
  {t:'এখন ব্যস্ত, পিএস-এর সাথে কথা বলুন 😬',r:'সুমি সন্দেহের চোখে নোট লিখলেন।',e:{cp:3,risk:8,sup:-2}},
- {t:'বিজ্ঞাপন দিয়ে চুপ করানোর চেষ্টা করি (কাল্পনিক অনৈতিক পথ)',r:'সুমি রেকর্ডার চালু রেখেছিলেন! শিরোনাম: "টাকা দিয়ে মুখ বন্ধের চেষ্টা"।',e:{cp:-5,risk:20,sup:-8,inf:-2}}]},
+ {t:'বিজ্ঞাপন দিয়ে চুপ করানোর চেষ্টা করি (কাল্পনিক অনৈতিক পথ)',r:'সুমি রেকর্ডার চালু রেখেছিলেন! শিরোনাম: "টাকা দিয়ে মুখ বন্ধের চেষ্টা"।',e:{cp:-5,risk:20,sup:-8,inf:-2,m:-12}}]},
 {id:'rafiq',name:'সভাপতি রফিক',role:'বাজার কমিটি',type:'প্রচারণা',x:-24,z:-3,min:0,col:'#0277bd',cap:'#ffffff',
  q:'ভোটের আগে হাওয়া তুলতে হবে। কী ধরনের প্রচারণা চালাবে?',
- ch:[{t:'পোস্টার-ব্যানারে এলাকা ছেয়ে ফেলি 🪧',r:'ব্যানারে শহর ঢাকল — ছবির সাইজ বাড়ল, প্রতিশ্রুতির না।',e:{cp:14,sup:4,inf:3,risk:2}},
+ ch:[{t:'পোস্টার-ব্যানারে এলাকা ছেয়ে ফেলি 🪧',r:'ব্যানারে শহর ঢাকল — ছবির সাইজ বাড়ল, প্রতিশ্রুতির না।',e:{cp:14,sup:4,inf:3,risk:2,m:-4}},
  {t:'ফেসবুক লাইভে জনসংযোগ 📱',r:'লাইভে লাইক বাড়ল, কমেন্টে কিছু ট্রলও জুটল।',e:{cp:10,sup:8,inf:2,risk:1}},
- {t:'বিশাল জনসভা ডাকি 📣',r:'মাইক ফাটিয়ে সভা শেষ — ভাড়া-করা ভিড় নিয়ে কানাঘুষা চলছে।',e:{cp:26,sup:10,inf:7,risk:5}}]},
+ {t:'বিশাল জনসভা ডাকি 📣',r:'মাইক ফাটিয়ে সভা শেষ — ভাড়া-করা ভিড় নিয়ে কানাঘুষা চলছে।',e:{cp:26,sup:10,inf:7,risk:5,m:-8}}]},
 {id:'kashem',name:'কাশেম চাচা',role:'প্রবীণ গ্রামবাসী',type:'জনসেবা',x:3,z:18,min:0,col:'#8d6e63',cap:'#eeeeee',
  q:'বাবা, বন্যায় অনেকে ঘরছাড়া। ত্রাণ বিলির লোক নেই। তুমি কী করবে?',
- ch:[{t:'নিজে দাঁড়িয়ে ত্রাণ বিলি করি 🍚',r:'ঘাম ঝরালে, দোয়া পেলে — মানুষ তোমায় মনে রাখবে।',e:{cp:8,sup:16,inf:3,risk:-3}},
+ ch:[{t:'নিজে দাঁড়িয়ে ত্রাণ বিলি করি 🍚',r:'ঘাম ঝরালে, দোয়া পেলে — মানুষ তোমায় মনে রাখবে।',e:{cp:8,sup:16,inf:3,risk:-3,m:-3}},
  {t:'ছবি তুলে ফেসবুকে পোস্ট করি 🤳',r:'ছবিটা ভাইরাল! তবে ত্রাণের থলিটা ছিল খালি...',e:{cp:12,sup:2,inf:2,risk:2}},
- {t:'টিউবওয়েল বসানোর উদ্যোগ নিই 🚰',r:'টেকসই কাজ — গ্রাম তোমার নাম বলে।',e:{cp:5,sup:12,inf:4,risk:-2}}]},
+ {t:'টিউবওয়েল বসানোর উদ্যোগ নিই 🚰',r:'টেকসই কাজ — গ্রাম তোমার নাম বলে।',e:{cp:5,sup:12,inf:4,risk:-2,m:-6}}]},
 {id:'mp',name:'এমপি ডা. কালাম (কাল্পনিক)',role:'সংসদ সদস্য',type:'বড়স্তরের তোষামোদ',x:38,z:-10,min:1,col:'#f5f5f5',cap:'#b71c1c',
  lock:'আমার সাথে দেখা করতে হলে অন্তত নেতা হতে হবে, বাবা।',
  q:'তরুণ নেতারা ভালোই আসছে! আমার পাশে থাকলে দল তোমাকে মনে রাখবে।',
  ch:[{t:'স্যার, আপনি ছাড়া এই এলাকা অচল! 🙇',r:'এমপি সাহেব হেসে বললেন: "তোমার ভবিষ্যৎ উজ্জ্বল!"',e:{cp:28,inf:8,risk:6,sup:-2}},
  {t:'স্যার, জনগণের দাবিগুলো সংসদে তুলবেন কি?',r:'এমপি একটু থতমত খেলেন, তবে প্রতিশ্রুতি দিলেন।',e:{cp:10,sup:10,inf:4}},
- {t:'আপনার জন্মদিনে শহর জুড়ে তোরণ বানাই! 🎂',r:'তোরণে শহর ঝলমল — বাজেট নিয়ে প্রশ্ন উঠল।',e:{cp:35,inf:7,risk:10,sup:-5}}]},
+ {t:'আপনার জন্মদিনে শহর জুড়ে তোরণ বানাই! 🎂',r:'তোরণে শহর ঝলমল — বাজেট নিয়ে প্রশ্ন উঠল।',e:{cp:35,inf:7,risk:10,sup:-5,m:-10}}]},
 {id:'minister',name:'মন্ত্রী জনাব শাহীন (কাল্পনিক)',role:'মন্ত্রী',type:'ক্ষমতার চূড়া',x:0,z:-55,min:2,col:'#212121',cap:'#f4c430',
  lock:'মন্ত্রীর দরজা শুধু এমপিদের জন্য খোলে।',
  q:'চেয়ারের কাছাকাছি আসছ। এখানে পা পিছলে পড়ার ঝুঁকিও বেশি।',
  ch:[{t:'মন্ত্রীজি, আপনার সিদ্ধান্তই আমার সিদ্ধান্ত! 🫡',r:'মন্ত্রী সাহেব মাথা নাড়লেন — আরেকটি "হ্যাঁ-জি" যোগ হলো।',e:{cp:40,inf:12,risk:12,sup:-3}},
  {t:'নীতি নিয়ে কিছু গঠনমূলক পরামর্শ দিই',r:'মন্ত্রী মনোযোগ দিয়ে শুনলেন, ফাইলে নোট নিলেন।',e:{cp:14,sup:9,inf:8,risk:-2}},
- {t:'গোপন নথি দেখিয়ে সুবিধা নিই (কাল্পনিক অনৈতিক পথ)',r:'সুবিধা মিলল, কিন্তু নথির প্রতিটি কপিতে তোমার আঙুলের ছাপ!',e:{cp:45,inf:15,risk:30,sup:-10}}]}
+ {t:'গোপন নথি দেখিয়ে সুবিধা নিই (কাল্পনিক অনৈতিক পথ)',r:'সুবিধা মিলল, কিন্তু নথির প্রতিটি কপিতে তোমার আঙুলের ছাপ!',e:{cp:45,inf:15,risk:30,sup:-10,m:60}}]},
+/* ---- নতুন চরিত্র ---- */
+{id:'jabbar',name:'দারোগা জব্বার (কাল্পনিক)',role:'থানার ওসি',type:'ঘুস ও মামলা',x:-38,z:10,min:0,col:'#1a237e',cap:'#0d1442',
+ q:'তোমার নামে কিছু অভিযোগ ফাইলে উঠেছে। ঝামেলা মিটমাট করতে চাও, নাকি আইনের পথে যাবে?',
+ ch:[{t:'ঘুস দিয়ে ফাইল চাপা দিই (কাল্পনিক ঘুস) 💵',r:'ফাইল আলমারির তলায় চলে গেল... আপাতত।',e:{m:-15,risk:-18,cp:4,sup:-2},p:.25,f:{r:'ঘুসের নোটের নম্বর টুকে রাখা হয়েছিল! ফাঁদ মামলা!',e:{risk:20,sup:-6}}},
+ {t:'আইন মেনে পুরো সহযোগিতা করি ⚖️',r:'জব্বার অবাক: "এমন নেতা তো দেখি না!" জনগণও খুশি।',e:{sup:6,risk:-8,cp:2}},
+ {t:'থানার জন্য "বার্ষিক উপহার" পাঠাই 🎁',r:'থানায় মিষ্টির প্যাকেট, ফাইলে সবুজ সংকেত।',e:{m:-8,cp:10,inf:4,risk:3}}]},
+{id:'karim',name:'দোকানদার করিম (কাল্পনিক)',role:'বাজারের ব্যবসায়ী',type:'চাঁদাবাজি',x:-42,z:-25,min:0,col:'#ef6c00',cap:'#fafafa',
+ q:'নেতা সাহেব, বাজারে ব্যবসা করা কঠিন হয়ে গেছে। আপনাকে দেখে কিছুটা ভয়ও পাচ্ছি...',
+ ch:[{t:'"নিরাপত্তা চাঁদা" দাবি করি (কাল্পনিক চাঁদাবাজি) 💸',r:'করিম কাঁপা হাতে টাকা দিল... কিন্তু বাজারের সবাই তোমার নাম ফিসফিস করে বলছে।',e:{cp:20,m:18,risk:16,sup:-12,inf:4},p:.3,f:{r:'এক দোকানি মোবাইলে ভিডিও করেছিল! ভিডিও ভাইরাল!',e:{risk:28,sup:-18,cp:8}}},
+ {t:'দোকান কমিটি করে সদস্য ফি তুলি',r:'ফি নামে চাঁদা — তবে রসিদ আছে, তাই কিছুটা বৈধ দেখায়।',e:{cp:10,m:6,risk:5,sup:-3}},
+ {t:'ব্যবসায়ীদের সমস্যা শুনে প্রশাসনকে জানাই 🤝',r:'বাজারে সুনাম হলো — "এই নেতা অন্যরকম!"',e:{cp:3,sup:10,risk:-4,inf:2}}]},
+{id:'mamun',name:'ভাগিনা মামুন (কাল্পনিক)',role:'দলীয় ক্যাডার-প্রধান',type:'রাজনৈতিক সহিংসতা',x:-56,z:-16,min:1,col:'#3e2723',cap:'#000000',
+ lock:'ছোট কর্মীর সাথে আমি কথা বলি না, ভাই। আগে নেতা হও।',
+ q:'ভাই, ভোট ঘনিয়ে আসছে। প্রতিপক্ষকে একটু "বুঝিয়ে" দেব? ছেলেরা প্রস্তুত। আর শফিক ভাইয়ের ঘটনার পর পুলিশও আমাদের খুঁজছে...',
+ ch:[{t:'ক্যাডার ভাড়া করে বিরোধীদের সভা দখল করি (কাল্পনিক সহিংসতা) 🪖',r:'সভা পণ্ড, কিন্তু রাস্তায় রক্তের দাগ — রাজনীতির এই পথ কখনো শান্ত থাকে না।',e:{cp:30,inf:10,m:-10,risk:22,sup:-14},p:.3,f:{r:'সিসিটিভি ফুটেজ ফাঁস! দুইজন হাসপাতালে, মামলা তোমার নামে!',e:{risk:38,sup:-20}}},
+ {t:'মামুনকে পুলিশের হাতে তুলে দিই ⚖️',r:'ক্যাডার-প্রধান ধরা পড়ল। শত্রু বাড়ল, কিন্তু জনগণ সাহসের প্রশংসা করল।',e:{sup:12,risk:-10,inf:-3,cp:5}},
+ {t:'মামুনকে লুকিয়ে রাখি (আসামিকে আশ্রয়, কাল্পনিক অপরাধ) 🕳️',r:'আশ্রয় দিলে, কিন্তু প্রতিটি রাত এখন তোমার জন্য ঝুঁকির।',e:{cp:15,inf:6,risk:30,sup:-8,m:-5}},
+ {t:'ক্যাডারদের দিয়ে বৃক্ষরোপণ করাই 🌱',r:'হেলমেট-পরা তরুণরা চারা লাগাচ্ছে — অদ্ভুত দৃশ্য, ভালো ছবি।',e:{sup:7,cp:6,m:-2,inf:2,risk:-2}}]},
+{id:'nazma',name:'ইন্সপেক্টর নাজমা (কাল্পনিক)',role:'গোয়েন্দা পুলিশ',type:'হত্যা মামলার তদন্ত',x:22,z:-38,min:1,col:'#263238',cap:'#37474f',
+ lock:'এখন আপনার সাথে কথা বলার মতো কিছু নেই।',
+ q:'নেতা শফিকের রহস্যজনক মৃত্যুর (কাল্পনিক) তদন্ত চলছে। আপনার এলাকার কিছু লোকের নাম এসেছে। আপনার বক্তব্য কী?',
+ ch:[{t:'পূর্ণ সহযোগিতা করি, সব তথ্য দিই 📂',r:'নাজমা নোট নিলেন। সত্যের পাশে দাঁড়ানোয় জনগণের আস্থা বাড়ল।',e:{sup:10,risk:-12,cp:2,inf:2}},
+ {t:'সাক্ষীদের ভয় দেখিয়ে মুখ বন্ধ করাই (কাল্পনিক অপরাধ) 😠',r:'সাক্ষীরা চুপ, কিন্তু বাতাসে ভয় — তদন্তকারী তোমার দিকে এক পা এগিয়ে এলেন।',e:{risk:32,sup:-12,cp:15,inf:5}},
+ {t:'ঘুস দিয়ে ফাইল বন্ধ করাই 💵',r:'ফাইল আপাতত থমকে আছে...',e:{m:-40,risk:-10,cp:6,sup:-3},p:.4,f:{r:'নাজমা ঘুস প্রত্যাখ্যান করে পুরো কথোপকথন রেকর্ড করেছিলেন!',e:{risk:35,sup:-10}}}]},
+{id:'rahman',name:'ব্যারিস্টার রহমান (কাল্পনিক)',role:'আইনজীবী',type:'আইনি সুরক্ষা',x:40,z:30,min:0,col:'#4e342e',cap:'#fafafa',
+ q:'মামলা-মোকদ্দমার যুগ। আইনের ছায়ায় থাকলে ঝুঁকি কমে — তবে ফি আছে।',
+ ch:[{t:'আগাম আইনি পরামর্শ নিই 📘',r:'রহমান ফাইল ঘেঁটে কয়েকটি ফাঁক বন্ধ করলেন।',e:{m:-10,risk:-14,cp:2}},
+ {t:'বিশেষ আইনি দল ভাড়া করি (মোটা ফি) 🧑‍⚖️',r:'নামী আইনজীবীর দল — তদন্তকারীরা এখন দুইবার ভাবে।',e:{m:-30,risk:-30,cp:5}},
+ {t:'বিনা মূল্যে আইনি সহায়তা ক্যাম্প করাই 🤲',r:'গরিবরা আইনি সাহায্য পেল — তোমার নাম ছড়াল।',e:{m:-6,sup:10,cp:8,risk:-4,inf:3}}]},
+{id:'faruk',name:'ব্যাংক ম্যানেজার ফারুক (কাল্পনিক)',role:'ব্যাংক কর্মকর্তা',type:'ঋণ জালিয়াতি',x:-20,z:38,min:1,col:'#006064',cap:'#e0f7fa',
+ lock:'ছোট কর্মীকে বড় ঋণ দিই না। আগে নেতা হয়ে আসুন।',
+ q:'নেতা সাহেব, ব্যাংকে তারল্য আছে। ঋণ লাগলে বলুন — কীভাবে নেবেন?',
+ ch:[{t:'বেনামি ঋণ নিই, ফেরত দেওয়ার ইচ্ছা নেই (কাল্পনিক ঋণখেলাপি) 🏴',r:'টাকার পাহাড় — কিন্তু খেলাপি তালিকার কালি এখনও কাঁচা।',e:{m:80,risk:26,sup:-6,cp:20},p:.25,f:{r:'ব্যাংকের অডিটে ঋণ-জালিয়াতি ধরা পড়ল!',e:{risk:40,sup:-12}}},
+ {t:'কাল্পনিক "স্বপ্নপূরণ প্রকল্পের" নামে ঋণ নিই 🏗️',r:'কাগজে প্রকল্প জমজমাট, মাঠে শুধু সাইনবোর্ড।',e:{m:40,risk:12,cp:12,inf:3}},
+ {t:'সৎ ব্যবসা-ঋণে ছোট ব্যবসা শুরু করি 🏪',r:'ধীরে ধীরে লাভ আসছে — স্থানীয়দের কর্মসংস্থানও হলো।',e:{m:12,sup:5,risk:-1,cp:4}}]},
+{id:'tanvir',name:'অনলাইন অ্যাক্টিভিস্ট তানভীর',role:'ট্রল সেল প্রধান',type:'গুজব ও প্রচার',x:58,z:22,min:0,col:'#00897b',cap:'#212121',
+ q:'ভাই, ফেসবুকেই এখন আসল ভোটের লড়াই। আমি পেজ চালাই — কী করবেন?',
+ ch:[{t:'প্রতিপক্ষ নিয়ে ভুয়া খবর ছড়াই (কাল্পনিক গুজব) 📢',r:'গুজব দাবানলের মতো ছড়াল — কিন্তু ফ্যাক্ট-চেকাররা ঘুমিয়ে নেই।',e:{cp:18,sup:-5,risk:10,inf:4,m:-3},p:.3,f:{r:'ফ্যাক্ট-চেক! তোমার পেজের পেছনে কে, তা ফাঁস!',e:{risk:22,sup:-12}}},
+ {t:'পেইড ফ্যান পেজ খুলি 💻',r:'লাইক-কমেন্ট বাড়ল, বট-বাহিনী মাঠে নামল।',e:{m:-8,cp:16,sup:6,inf:5,risk:3}},
+ {t:'ফ্যাক্ট-চেক করে সত্য তুলে ধরি ✅',r:'সত্যের পক্ষে দাঁড়ালে — অনুসারী কম, কিন্তু আস্থা বেশি।',e:{sup:9,risk:-6,cp:4}}]},
+{id:'harun',name:'নির্বাচন কর্মকর্তা হারুন (কাল্পনিক)',role:'ভোটকেন্দ্র প্রধান',type:'ভোট জালিয়াতি',x:62,z:-41,min:1,col:'#33691e',cap:'#f1f8e9',
+ lock:'নির্বাচনের আলোচনা এখনই নয়। আগে নেতা হোন।',
+ q:'ভোটের দিন সামনে। সুষ্ঠু ভোট, নাকি "ব্যবস্থা"? সিদ্ধান্ত আপনার...',
+ ch:[{t:'ভোটের রাতে ব্যালট বাক্স ভরি (কাল্পনিক ভোট জালিয়াতি) 🗳️',r:'ফল তোমার পক্ষে — কিন্তু প্রতিটি বাক্সে সন্দেহের গন্ধ।',e:{cp:35,inf:12,risk:28,sup:-15,m:-12},p:.3,f:{r:'পর্যবেক্ষকরা হাতেনাতে ধরে ফেলল!',e:{risk:42,sup:-20}}},
+ {t:'ভোটারদের মধ্যে টাকা বিলি করি (কাল্পনিক ভোট কেনা) 💰',r:'ভোট এল, নৈতিকতা গেল।',e:{m:-25,cp:22,sup:6,inf:6,risk:14}},
+ {t:'সুষ্ঠু ভোটের পক্ষে জোরালো বক্তব্য দিই 🕊️',r:'গণতন্ত্রের পক্ষে দাঁড়ালে জনগণ করতালি দিল।',e:{sup:12,risk:-5,inf:4,cp:6}}]}
 ];
 const EVENTS=[
 {t:'📰 বিরোধীরা তোমার ব্যানার নিয়ে ব্যঙ্গ করেছে!',e:{sup:-4}},
 {t:'😂 তোমার তোষামোদের ভিডিও ভাইরাল — কিছুটা ট্রল!',e:{sup:-2,risk:3,cp:2}},
 {t:'👏 পাড়ার ছেলেরা তোমার কাজের প্রশংসা করছে।',e:{sup:4}},
 {t:'🕵️ কেউ তোমার "ম্যানেজ" নিয়ে প্রশ্ন তুলেছে।',e:{risk:4}},
-{t:'🎁 দল থেকে ছোট সম্মাননা মিলল!',e:{cp:5,inf:1}}];
+{t:'🎁 দল থেকে ছোট সম্মাননা মিলল!',e:{cp:5,inf:1}},
+{t:'🏛️ দুর্নীতি দমন সংস্থা (কাল্পনিক) তোমার সম্পদের হিসাব চেয়েছে!',e:{risk:9}},
+{t:'🌙 ঈদের আগে "উপহার" এল।',e:{m:8,cp:3}},
+{t:'🔥 হরতালে ব্যবসায়ীরা ক্ষুব্ধ, দোষ তোমার ঘাড়ে!',e:{sup:-5}},
+{t:'💼 দলীয় তহবিল থেকে বরাদ্দ মিলল।',e:{m:6,cp:3}},
+{t:'🧾 ইনকাম ট্যাক্স নোটিশ এসেছে।',e:{m:-5,risk:3}},
+{t:'📣 সাংবাদিকরা তোমার সম্পদের উৎস নিয়ে প্রশ্ন করছে।',e:{risk:6,sup:-2}},
+{t:'🏥 এলাকায় ফ্রি মেডিকেল ক্যাম্পের কৃতিত্ব তোমার ঘাড়ে এসে পড়ল!',e:{sup:5,cp:3}}];
 
 /* ---------- গ্লোবাল ---------- */
-let renderer,scene,camera,player,WT,cv;
+let renderer,scene,camera,player,WT,cv,mg;
 const colliders=[],cars=[];
-let mode='boot',S=newState(),camYaw=0,T=0,walk=0,nearNpc=null,curNpc=null,chose=false,evT=40,markT=0,setBack='home',loopOn=false;
+let mode='boot',S=newState(),camYaw=0,T=0,walk=0,nearNpc=null,curNpc=null,chose=false,evT=40,markT=0,mapT=0,setBack='home',loopOn=false,lastT=0,jailIv=null;
 const keys={},joy={x:0,y:0},MK={};
 let seed=12345;const rnd=()=>{seed=(seed*16807)%2147483647;return (seed-1)/2147483646};
 let ac;
@@ -238,6 +309,7 @@ function cyl(rt,rb,h,c,x,y,z,par,seg){const m=new THREE.Mesh(new THREE.CylinderG
 function plane(w,d,c,x,y,z){const m=new THREE.Mesh(new THREE.PlaneGeometry(w,d),M(c));m.rotation.x=-Math.PI/2;m.position.set(x,y,z);scene.add(m);return m}
 function textTex(txt,w,h,font,fg,bg){const c=document.createElement('canvas');c.width=w;c.height=h;const g=c.getContext('2d');if(bg){g.fillStyle=bg;g.fillRect(0,0,w,h)}g.font=font;g.textAlign='center';g.textBaseline='middle';g.fillStyle=fg;if(!bg){g.lineWidth=6;g.strokeStyle='rgba(0,0,0,.75)';g.strokeText(txt,w/2,h/2,w-24)}g.fillText(txt,w/2,h/2,w-24);return new THREE.CanvasTexture(c)}
 function label(txt,w,col){w=w||8;const s=new THREE.Sprite(new THREE.SpriteMaterial({map:textTex(txt,768,96,'700 44px "Hind Siliguri","Noto Sans Bengali",sans-serif',col||'#fff'),transparent:true}));s.scale.set(w,w*96/768,1);return s}
+function sign(txt,x,y,z,w,col){const l=label(txt,w||9,col||'#fff');l.position.set(x,y,z);scene.add(l)}
 function winTex(){const c=document.createElement('canvas');c.width=c.height=64;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,64,64);g.fillStyle='#5b6b7a';for(let i=0;i<2;i++)for(let j=0;j<2;j++)g.fillRect(8+i*30,8+j*30,18,16);const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;return t}
 
 /* ---------- দৃশ্য তৈরি ---------- */
@@ -245,13 +317,14 @@ function init(){
   renderer=new THREE.WebGLRenderer({antialias:true});
   renderer.setPixelRatio(settings.hq?Math.min(window.devicePixelRatio||1,2):1);
   renderer.setSize(innerWidth,innerHeight);
-  cv=renderer.domElement;document.body.insertBefore(cv,document.body.firstChild);
+  cv=renderer.domElement;cv.className='main';document.body.insertBefore(cv,document.body.firstChild);
   scene=new THREE.Scene();scene.background=new THREE.Color(0x9fd3f0);scene.fog=new THREE.Fog(0x9fd3f0,70,180);
   camera=new THREE.PerspectiveCamera(60,innerWidth/innerHeight,.3,400);
   scene.add(new THREE.HemisphereLight(0xffffff,0x4a6b45,.9));
   const sun=new THREE.DirectionalLight(0xfff1d0,.7);sun.position.set(40,80,30);scene.add(sun);
   WT=winTex();
   ['!','🔒','⏳'].forEach((t,i)=>{MK[['ok','lock','wait'][i]]=textTex(t,128,128,'700 100px sans-serif',i?'#fff':'#ffd54a')});
+  mg=$('mm').getContext('2d');
 }
 function building(x,z,w,d,h,pal){
   const t=WT.clone();t.needsUpdate=true;t.repeat.set(Math.ceil(w/3),Math.ceil(h/3));
@@ -269,8 +342,16 @@ function parliament(bx,bz){
   cyl(4.5,5,2,0xf1ebdd,bx,5.3,bz,null,16);
   const d=new THREE.Mesh(new THREE.SphereGeometry(4.5,14,8,0,Math.PI*2,0,Math.PI/2),M(0xf4c430));d.position.set(bx,6.3,bz);scene.add(d);
   cyl(.08,.08,4,0x333333,bx,12.8,bz,null,6);box(1.6,1,.05,0xd62839,bx+.9,14,bz);
-  const l=label('কাল্পনিক সংসদ ভবন',14,'#ffd54a');l.position.set(bx,17,bz);scene.add(l);
+  sign('কাল্পনিক সংসদ ভবন',bx,17,bz,14,'#ffd54a');
   colliders.push({x:bx,z:bz,hw:11,hd:6.6});
+}
+function jailBuild(bx,bz){
+  box(22,7,12,0x7a7e86,bx,3.5,bz);box(23,.6,13,0x4b4e55,bx,7.3,bz);
+  for(let i=-4;i<=4;i++)box(.5,2.2,.2,0x151515,bx+i*2.3,4.2,bz+6.05);
+  box(3,4.5,.3,0x2b2b2b,bx,2.25,bz+6.1);
+  [[-11,-6],[11,-6],[-11,6],[11,6]].forEach(c=>{cyl(1,1.2,11,0x6a6e75,bx+c[0],5.5,bz+c[1],null,8);cyl(1.6,1.6,1.2,0x333333,bx+c[0],11.6,bz+c[1],null,8)});
+  sign('⛓️ কেন্দ্রীয় কারাগার (কাল্পনিক)',bx,14,bz,14,'#ff8a80');
+  colliders.push({x:bx,z:bz,hw:11.6,hd:6.6});
 }
 function buildCity(){
   plane(320,320,0x5a8f4f,0,0,0);
@@ -283,6 +364,7 @@ function buildCity(){
   C.forEach(bx=>C.forEach(bz=>{
     const k=bx+','+bz;
     if(k==='20,-60'){parliament(bx,bz);return}
+    if(k==='-20,-60'){jailBuild(bx,bz);tree(bx-14,bz+4);tree(bx+14,bz-4);return}
     if(parks.indexOf(k)>=0){plane(30,30,0x6fae5c,bx,.06,bz);for(let i=0;i<9;i++)tree(bx+(rnd()-.5)*24,bz+(rnd()-.5)*24);return}
     for(let i=-1;i<=1;i+=2)for(let j=-1;j<=1;j+=2){
       if(rnd()<.15)continue;
@@ -293,7 +375,12 @@ function buildCity(){
 function buildProps(){
   cyl(3.2,3.4,.8,0xb0b0b0,0,.4,0,null,16);cyl(2.6,2.6,.5,0x4fc3f7,0,.85,0,null,16);cyl(.4,.5,2,0xcfcfcf,0,1.6,0);
   colliders.push({x:0,z:0,hw:3.4,hd:3.4});
-  const fl=label('কেন্দ্রীয় চত্বর',7,'#fff');fl.position.set(0,4.2,0);scene.add(fl);
+  sign('কেন্দ্রীয় চত্বর',0,4.2,0,7);
+  sign('🏪 কাল্পনিক বাজার',-42,8,-25,9,'#ffcc80');
+  sign('🚓 থানা (কাল্পনিক)',-38,8,10,9,'#90caf9');
+  sign('🏦 কাল্পনিক ব্যাংক',-20,8,38,9,'#80deea');
+  sign('⚖️ আইনজীবী চেম্বার',40,8,30,9,'#bcaaa4');
+  sign('🗳️ ভোটকেন্দ্র',62,8,-41,8,'#c5e1a5');
   [[5.2,-20,Math.PI/2,'চামচা জিন্দাবাদ!'],[-5.2,22,Math.PI/2,'উন্নয়ন মানেই ব্যানার!'],[-22,5.2,0,'প্রতিশ্রুতি আজ, ভুলে যাওয়া কাল'],[24,-5.2,0,'সবার নেতা, সবার ছবি']].forEach(a=>{
     cyl(.15,.15,6,0x444444,a[0],3,a[1],null,6);
     const p=new THREE.Mesh(new THREE.PlaneGeometry(9,3.4),new THREE.MeshBasicMaterial({map:textTex(a[3],512,192,'700 54px "Hind Siliguri","Noto Sans Bengali",sans-serif','#fff','#c62828'),side:THREE.DoubleSide}));
@@ -351,6 +438,7 @@ function hud(){
   $('sCP').textContent=bn(S.cp);$('sInf').textContent=bn(S.inf);
   $('vSup').textContent=bn(S.sup);$('bSup').style.width=S.sup+'%';
   $('vRisk').textContent=bn(S.risk);$('bRisk').style.width=S.risk+'%';
+  $('sMoney').textContent=bn(S.money);$('sJail').textContent=bn(S.jail);
 }
 function refreshMarkers(){
   NPCS.forEach(n=>{
@@ -359,7 +447,7 @@ function refreshMarkers(){
   });
 }
 function effText(e){
-  const f=[['cp','চামচা'],['sup','জনসমর্থন'],['inf','প্রভাব'],['risk','তদন্ত-ঝুঁকি']],o=[];
+  const f=[['cp','চামচা'],['sup','জনসমর্থন'],['inf','প্রভাব'],['risk','তদন্ত-ঝুঁকি'],['m','টাকা (লাখ)']],o=[];
   f.forEach(a=>{const v=e[a[0]];if(v)o.push(a[1]+' '+(v>0?'+':'−')+bn(Math.abs(v)))});
   return '📊 '+o.join(' • ');
 }
@@ -368,8 +456,28 @@ function apply(e){
   S.sup=Math.min(100,Math.max(0,S.sup+(e.sup||0)));
   S.inf=Math.max(0,S.inf+(e.inf||0));
   S.risk=Math.min(100,Math.max(0,S.risk+(e.risk||0)));
-  S.score+=Math.max(10,Math.round(40+(e.cp||0)*4+(e.sup||0)*3+(e.inf||0)*3-(e.risk||0)*2));
+  S.money=Math.max(0,S.money+(e.m||0));
+  S.score+=Math.max(10,Math.round(40+(e.cp||0)*4+(e.sup||0)*3+(e.inf||0)*3-(e.risk||0)*2+Math.max(0,e.m||0)*2));
   hud();
+}
+function titleOf(){
+  if(S.sup>=70&&S.risk<30)return 'জনতার নেতা 🌟';
+  if(S.risk>=60)return 'ঝুঁকির খেলোয়াড় 🎲';
+  if(S.cp>=250)return 'চামচা-সম্রাট 🥄';
+  return 'ঘাগু রাজনীতিক 🦊';
+}
+
+/* ---------- মিনিম্যাপ ---------- */
+function drawMap(){
+  if(!mg||!player)return;
+  const W=88,k=W/190,X=x=>(x+95)*k,Z=z=>(z+95)*k;
+  mg.clearRect(0,0,W,W);mg.fillStyle='#24402b';mg.fillRect(0,0,W,W);
+  mg.strokeStyle='#6a6e75';mg.lineWidth=2;
+  [-80,-40,0,40,80].forEach(v=>{mg.beginPath();mg.moveTo(X(v),0);mg.lineTo(X(v),W);mg.moveTo(0,Z(v));mg.lineTo(W,Z(v));mg.stroke()});
+  mg.fillStyle='#bbbbbb';mg.fillRect(X(-20)-3,Z(-60)-2,6,4);
+  mg.fillStyle='#f4c430';mg.fillRect(X(20)-3,Z(-60)-2,6,4);
+  NPCS.forEach(n=>{const cd=(S.cool[n.id]||0)-S.time;mg.fillStyle=S.rank<n.min?'#777':(cd>0?'#e6b800':'#2ecc71');mg.beginPath();mg.arc(X(n.x),Z(n.z),2.4,0,7);mg.fill()});
+  const p=player.position;mg.fillStyle='#fff';mg.beginPath();mg.arc(X(p.x),Z(p.z),3.2,0,7);mg.fill();mg.strokeStyle='#e63946';mg.lineWidth=1.5;mg.stroke();
 }
 
 /* ---------- সংলাপ ---------- */
@@ -380,13 +488,16 @@ function openDlg(n){
   const cd=(S.cool[n.id]||0)-S.time;
   if(S.rank<n.min){$('dt').textContent=n.lock;addBtn('ঠিক আছে, পরে আসব',closeDlg,'dim')}
   else if(cd>0){$('dt').textContent='এখন ব্যস্ত আছি, '+bn(Math.ceil(cd))+' সেকেন্ড পরে এসো।';addBtn('ঠিক আছে',closeDlg,'dim')}
-  else{$('dt').textContent=n.q;n.ch.forEach(c=>addBtn(c.t,()=>choose(n,c)));addBtn('এখন নয়',closeDlg,'dim')}
+  else{$('dt').textContent=n.q;n.ch.forEach(c=>{const cost=(c.e.m&&c.e.m<0)?'  [খরচ '+bn(-c.e.m)+' লাখ]':'';addBtn(c.t+cost,()=>choose(n,c))});addBtn('এখন নয়',closeDlg,'dim')}
   $('dlg').classList.add('show');$('hud').classList.add('show');
 }
 function choose(n,c){
-  apply(c.e);S.cool[n.id]=S.time+25;S.done++;chose=true;
-  $('dt').textContent=c.r+'\n\n'+effText(c.e);$('dc').innerHTML='';addBtn('ঠিক আছে',closeDlg);
-  ((c.e.sup||0)*2+(c.e.cp||0)-(c.e.risk||0)>0)?sfxGood():sfxBad();
+  if(c.e.m&&c.e.m<0&&S.money<-c.e.m){toast('💰 টাকা যথেষ্ট নয়! দরকার '+bn(-c.e.m)+' লাখ, আছে '+bn(S.money)+' লাখ।',2200);return}
+  let eff=c.e,res=c.r,pre='';
+  if(c.f&&Math.random()<c.p){eff=Object.assign({},c.e,c.f.e);res=c.f.r;pre='⚠️ উল্টো ফল!\n'}
+  apply(eff);S.cool[n.id]=S.time+25;S.done++;chose=true;
+  $('dt').textContent=pre+res+'\n\n'+effText(eff);$('dc').innerHTML='';addBtn('ঠিক আছে',closeDlg);
+  ((eff.sup||0)*2+(eff.cp||0)-(eff.risk||0)>0)?sfxGood():sfxBad();
 }
 function closeDlg(){
   $('dlg').classList.remove('show');
@@ -401,21 +512,70 @@ function afterChoice(){
     if(S.cp>=g.cp&&S.sup>=g.sup&&S.inf>=g.inf){S.rank++;up=true;S.score+=500*S.rank;banner('🎉 পদোন্নতি! এখন তুমি '+RANKS[S.rank]);hud()}else break;
   }
   if(up)jingle();
-  if(S.risk>=100)return over('তদন্ত কমিটি (কাল্পনিক) তোমার সব "ম্যানেজ" ফাঁস করে দিয়েছে! ঝুঁকি ১০০% ছুঁয়েছে।');
+  if(S.risk>=100)return arrest('গোয়েন্দা পুলিশ তোমার বিরুদ্ধে মামলার সব প্রমাণ জোগাড় করে ফেলেছে! (সব কাল্পনিক)');
   if(S.sup<=0)return over('জনসমর্থন শূন্য! ভোটাররা তোমাকে ছুঁড়ে ফেলেছে — চামচা দিয়ে ভাত খাওয়া গেলেও ভোট খাওয়া যায় না।');
   if(S.rank>=3&&!S.won){S.won=true;save();return win()}
   save();
 }
+
+/* ---------- জেল ---------- */
+function arrest(why){
+  S.jail++;hud();
+  if(S.jail>=3)return over('তৃতীয়বার গ্রেপ্তার! আদালত দীর্ঘ কারাদণ্ড দিল (কাল্পনিক)। ক্ষমতার চেয়ার এখন কারাগারের বেঞ্চ।');
+  mode='jail';sfxBad();S.risk=75;hud();save();
+  $('jmsg').textContent=why+'\nগ্রেপ্তার '+bn(S.jail)+'/৩ — তৃতীয়বারে খেলা শেষ!';
+  $('jinfo').textContent='তোমার টাকা: '+bn(S.money)+' লাখ। কী করবে?';
+  $('jBail').textContent='⚖️ উকিল দিয়ে জামিন (খরচ '+bn(BAIL)+' লাখ)';
+  $('jBribe').textContent='💵 ঘুস দিয়ে বেরোও (খরচ '+bn(JBRIBE)+' লাখ, ঝুঁকিপূর্ণ)';
+  $('jServe').textContent='⛓️ সাজা ভোগ করো (পদাবনতি ও ক্ষতি)';
+  ['jBail','jBribe','jServe'].forEach(i=>$(i).style.display='');
+  $('jbw').style.display='none';$('jbar').style.width='0';
+  $('dlg').classList.remove('show');showScreens('jail');
+}
+function release(msg){
+  if(jailIv){clearInterval(jailIv);jailIv=null}
+  $('jbw').style.display='none';
+  player.position.set(-20,0,-47);camYaw=0;snapCam();
+  showScreens(null);mode='play';S.won=S.rank>=3;
+  S.score=Math.max(0,S.score-150);hud();refreshMarkers();save();banner(msg);
+}
+function jailBail(){
+  if(S.money<BAIL){toast('💰 জামিনের টাকা নেই! লাগবে '+bn(BAIL)+' লাখ।',2000);return}
+  S.money-=BAIL;S.risk=40;S.sup=Math.max(1,S.sup-4);release('⚖️ জামিন মিলল!');
+}
+function jailBribe(){
+  if(S.money<JBRIBE){toast('💰 ঘুসের টাকা নেই! লাগবে '+bn(JBRIBE)+' লাখ।',2000);return}
+  S.money-=JBRIBE;
+  if(Math.random()<.65){S.risk=55;S.sup=Math.max(1,S.sup-8);release('💵 ঘুসে তালা খুলল... কিন্তু সবাই জানে!')}
+  else{S.jail++;hud();if(S.jail>=3)return over('কারাগারে ঘুস দিতে গিয়ে ধরা! নতুন মামলায় আজীবন কারাদণ্ড (কাল্পনিক)।');toast('ঘুস ধরা পড়ল! সাজা বাড়ল ⛓️',2200);serve(true)}
+}
+function serve(long){
+  ['jBail','jBribe','jServe'].forEach(i=>$(i).style.display='none');
+  $('jbw').style.display='block';$('jbar').style.width='0';
+  $('jinfo').textContent=long?'বাড়তি সাজা চলছে… ⛓️':'সাজা চলছে… ⛓️';
+  let t=0;const D=long?12:8;
+  if(jailIv)clearInterval(jailIv);
+  jailIv=setInterval(()=>{
+    t+=.25;$('jbar').style.width=Math.min(100,t/D*100)+'%';
+    if(t>=D){
+      clearInterval(jailIv);jailIv=null;
+      S.risk=20;S.sup=Math.max(5,S.sup-12);S.cp=Math.floor(S.cp*.7);S.inf=Math.floor(S.inf*.7);S.money=Math.floor(S.money*.6);
+      if(S.rank>0)S.rank--;
+      release('সাজা শেষ! পদ এখন: '+RANKS[S.rank]);
+    }
+  },250);
+}
 function over(msg){
   mode='over';sfxBad();$('omsg').textContent=msg;
-  $('oinfo').textContent='চূড়ান্ত স্কোর: '+bn(S.score)+' • পদ: '+RANKS[S.rank]+' • মিশন: '+bn(S.done);
-  $('oLoad').style.display=hasSave()?'':'none';showScreens('over');
+  $('oinfo').textContent='চূড়ান্ত স্কোর: '+bn(S.score)+' • পদ: '+RANKS[S.rank]+' • মিশন: '+bn(S.done)+' • জেল: '+bn(S.jail)+'\n'+titleOf();
+  $('oLoad').style.display=hasSave()?'':'none';$('dlg').classList.remove('show');showScreens('over');
 }
 function win(){
   mode='over';jingle();
   $('wmsg').textContent=S.risk<30&&S.sup>60?'সৎ ও জনপ্রিয় মন্ত্রী! ব্যঙ্গের দুনিয়ায় এমন ঘটনা বিরল — জনগণ সত্যিই তোমার পাশে।':
    (S.risk>60?'মন্ত্রী তো হলে, কিন্তু তদন্তের তলোয়ার সুতোয় ঝুলছে মাথার ওপর। চেয়ারে বসা যত সহজ, টিকে থাকা তত নয়!':'ক্ষমতার চেয়ার পেলে — এবার চেয়ার ধরে রাখার আসল লড়াই শুরু। (সব চরিত্র ও ঘটনা কাল্পনিক)');
-  $('winfo').textContent='স্কোর: '+bn(S.score)+' • মিশন: '+bn(S.done);showScreens('win');
+  $('winfo').textContent='স্কোর: '+bn(S.score)+' • মিশন: '+bn(S.done)+' • টাকা: '+bn(S.money)+' লাখ\n'+titleOf();
+  $('winfo').style.whiteSpace='pre-line';showScreens('win');
 }
 
 /* ---------- খেলার প্রবাহ ---------- */
@@ -428,6 +588,7 @@ function followCam(dt,snap){
   camera.lookAt(p.x,1.6,p.z);
 }
 function startGame(load){
+  if(jailIv){clearInterval(jailIv);jailIv=null}
   if(load){const d=readSave();S=d?Object.assign(newState(),d):newState()}else S=newState();
   player.position.set(S.x,0,S.z);camYaw=0;snapCam();
   showScreens(null);$('hud').classList.add('show');$('dlg').classList.remove('show');
@@ -440,8 +601,8 @@ function goMenu(){mode='menu';$('hud').classList.remove('show');$('dlg').classLi
 function updateHome(){$('bCont').style.display=hasSave()?'':'none'}
 function pauseGame(){
   if(mode!=='play')return;mode='pause';
-  $('pinfo').textContent='পদ: '+RANKS[S.rank]+' • স্কোর: '+bn(S.score)+' • মিশন: '+bn(S.done)+'\n'+goalText();
-  $('pinfo').style.whiteSpace='pre-line';showScreens('pause');
+  $('pinfo').textContent='পদ: '+RANKS[S.rank]+' • স্কোর: '+bn(S.score)+' • মিশন: '+bn(S.done)+'\nটাকা: '+bn(S.money)+' লাখ • জেল: '+bn(S.jail)+'/৩\n'+goalText();
+  showScreens('pause');
 }
 function resumeGame(){showScreens(null);mode='play'}
 function tryInteract(){
@@ -490,13 +651,14 @@ function playUpdate(dt){
     }else{arr.style.visibility='hidden';$('htxt').textContent='🕐 সবাই ব্যস্ত বা পদ যথেষ্ট নয় — একটু অপেক্ষা করো'}
   }
   markT+=dt;if(markT>1){markT=0;refreshMarkers();hud()}
+  mapT+=dt;if(mapT>.15){mapT=0;drawMap()}
   S.risk=Math.max(0,S.risk-.15*dt);
   evT-=dt;
   if(evT<=0){evT=35+rnd()*25;const ev=EVENTS[Math.floor(rnd()*EVENTS.length)];apply(ev.e);toast(ev.t+'\n'+effText(ev.e),3200);afterChoice()}
 }
 function loop(){
   requestAnimationFrame(loop);
-  const dt=Math.min(.05,(performance.now()-loop.t||16)/1000);loop.t=performance.now();T+=dt;
+  const now=performance.now(),dt=Math.min(.05,lastT?(now-lastT)/1000:.016);lastT=now;T+=dt;
   if(mode==='play')playUpdate(dt);
   if(mode!=='menu'&&mode!=='boot')followCam(dt);
   else{const a=T*.12;camera.position.set(Math.sin(a)*65,32,Math.cos(a)*65);camera.lookAt(0,4,0)}
@@ -535,6 +697,9 @@ function bindUI(){
   $('pSet').onclick=()=>openSettings('pause');
   $('pRestart').onclick=()=>{if(confirm('বর্তমান অগ্রগতি মুছে নতুন করে শুরু করবে?'))startGame(false)};
   $('pMenu').onclick=()=>{save();goMenu()};
+  $('jBail').onclick=jailBail;
+  $('jBribe').onclick=jailBribe;
+  $('jServe').onclick=()=>serve(false);
   $('oLoad').onclick=()=>startGame(true);
   $('oNew').onclick=()=>startGame(false);
   $('oMenu').onclick=goMenu;
@@ -572,7 +737,7 @@ function bindUI(){
 function fail(msg){showScreens('err');$('errmsg').textContent=msg}
 function boot(){
   if(typeof THREE==='undefined'){fail('Three.js (3D লাইব্রেরি) লোড হয়নি। ইন্টারনেট সংযোগ ঠিক আছে কিনা দেখে পেজ রিলোড করো।');return}
-  const steps=[['রেন্ডারার তৈরি হচ্ছে…',init],['শহরের রাস্তা ও ভবন বানানো হচ্ছে…',buildCity],['বিলবোর্ড ও চত্বর সাজানো হচ্ছে…',buildProps],['চরিত্ররা প্রস্তুত হচ্ছে…',()=>{makeNPCs();makePlayer();makeCars();bindUI()}]];
+  const steps=[['রেন্ডারার তৈরি হচ্ছে…',init],['শহরের রাস্তা, ভবন ও কারাগার বানানো হচ্ছে…',buildCity],['বাজার, থানা ও বিলবোর্ড সাজানো হচ্ছে…',buildProps],['চরিত্ররা প্রস্তুত হচ্ছে…',()=>{makeNPCs();makePlayer();makeCars();bindUI()}]];
   let i=0;
   (function next(){
     if(i>=steps.length){
